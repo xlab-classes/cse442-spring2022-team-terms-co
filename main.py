@@ -8,12 +8,12 @@ intents.members = True
 client= discord.Client(intents=discord.Intents.all())
 
 #Dont commit the private key
-'''
-config= open("config.txt")
-TOKEN = os.environ.get(config.readline(32))
+
+config= open("config.txt", "r")
+tk = config.readline()
+TOKEN = tk
 config.close()
-'''
-TOKEN = 'OTQ1NDEwNzA4ODQ4Mzg2MTY5.YhPwVQ.DCbY-M9IT83w54wEK7lsSViKznw'
+
 
 
 toDos = {}
@@ -52,7 +52,7 @@ async def on_message(message):
 
         id_completed = int(message.content[message.content.find(' id=') + 4:])
         print("ID completed: ", id_completed)
-        m = "Congrats on completing task: " + str(id_completed)
+        m = "Congrats on completing task:" + str(id_completed)
         await message.channel.send(m)
 
         #add the task to completed tasks and remove it from toDos
