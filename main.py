@@ -8,9 +8,12 @@ intents.members = True
 client= discord.Client(intents=discord.Intents.all())
 
 #Dont commit the private key
+'''
 config= open("config.txt")
 TOKEN = os.environ.get(config.readline(32))
 config.close()
+'''
+TOKEN = 'OTQ1NDEwNzA4ODQ4Mzg2MTY5.YhPwVQ.DCbY-M9IT83w54wEK7lsSViKznw'
 
 
 toDos = {}
@@ -46,12 +49,20 @@ async def on_message(message):
         await message.channel.send(replies[random.randrange(len(replies))])
     if '!completed' in message.content:
         #for this to work id must be at the end of the message 
-        id_completed = int(message.content[message.conted.find(' id=') + 4:])
-        print("ID completed: ", completed)
+
+        id_completed = int(message.content[message.content.find(' id=') + 4:])
+        print("ID completed: ", id_completed)
+        m = "Congrats on completing task: " + str(id_completed)
+        await message.channel.send(m)
+
         #add the task to completed tasks and remove it from toDos
+        '''
         completed[id_completed] = toDos.pop(id_completed)
+
+        #TODO add randomized messages
         message.channel.send("Congrats on completing task: " , id_completed)
-        
+        '''
+            
 
 
 
