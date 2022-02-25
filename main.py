@@ -7,14 +7,11 @@ intents = discord.Intents.default()
 intents.members = True  
 client= discord.Client(intents=discord.Intents.all())
 
-#Dont commit the private key
-
+#Read the private key from a local file
 config= open("config.txt", "r")
 tk = config.readline()
 TOKEN = tk
 config.close()
-
-
 
 toDos = {}
 completed = {}
