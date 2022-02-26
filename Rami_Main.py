@@ -117,7 +117,7 @@ async def on_message(message):
 # Rami's code:**********************************************************************************************************
     #edit task:
     elif message.content.startswith('edit'):
-        debug = True                                           # if debugging, make True
+        debug = False                                           # if debugging, make True
         if debug: print('Before:')                              # debug
         if debug: print(toDos)                                  # debug
         user_msg = message.content
