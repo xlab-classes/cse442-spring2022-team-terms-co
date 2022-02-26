@@ -15,7 +15,7 @@ _4) Check all completed tasks_\
         - type "completed"
 
 _5) View all tasks_\
-        - type "view" to view all tasks
+        - type "view" to view all tasks and their IDs
 
 _6) Ask for help with commands_\
         - type "help" for assistance with commands
