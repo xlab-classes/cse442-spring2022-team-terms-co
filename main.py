@@ -23,6 +23,17 @@ replies = [
 
 id = 0
 
+#Given a message ID this sends a recieved message
+#Additionally remove this message from the TODO list and add it to completed
+def completed(message_id):
+    print("ID completed: ", message_id)
+    m = "Congrats on completing task: " + str(message_id)
+    completed_task = toDos.pop(message_id)
+    completed[message_id] = completed_task
+    return m
+    #add the task to completed tasks and remove it from toDos
+
+    
 @client.event
 async def on_ready():
     print(f'{client.user.name} has connected to Discord!')
@@ -45,20 +56,9 @@ async def on_message(message):
         print(toDos)
         await message.channel.send(replies[random.randrange(len(replies))])
     if '!completed' in message.content:
-        #for this to work id must be at the end of the message 
+        completed_message = completed(int(message.content[message.content.find(' id=') + 4:]))
+        await message.channel.send(completed_message)
 
-        id_completed = int(message.content[message.content.find(' id=') + 4:])
-        print("ID completed: ", id_completed)
-        m = "Congrats on completing task:" + str(id_completed)
-        await message.channel.send(m)
-
-        #add the task to completed tasks and remove it from toDos
-        '''
-        completed[id_completed] = toDos.pop(id_completed)
-
-        #TODO add randomized messages
-        message.channel.send("Congrats on completing task: " , id_completed)
-        '''
             
 
 
