@@ -119,31 +119,23 @@ async def on_message(message):
 
     # Rami's code:-----------------------------------------------------------------------------------------------
     elif message.content.startswith('edit'):
-        # print('Before:')  # debug
-        # print(toDos)  # debug
+        debug = False                                           # if debugging, make True
+        if debug: print('Before:')                              # debug
+        if debug: print(toDos)                                  # debug
         user_msg = message.content
-        # print(user_msg)  # get the user message
-        splited_sentence = user_msg.split(
-        )  # split the user message into a list
-        if splited_sentence[0].lower() in [
-                "edit", "!edit"
-        ]:  # check that the user message is an edit request
-            task_ID = splited_sentence[
-                1]  # get the task_ID of the task-to-edit
-            if task_ID.isdigit():  # check task_ID is an int
+        if debug: print(user_msg)                               # debug
+        splited_sentence = user_msg.split()                     # split the user message into a list
+        if splited_sentence[0].lower() in ["edit", "!edit"]:
+            task_ID = splited_sentence[1]                       # get the task_ID of the task-to-edit
+            if task_ID.isdigit():                               # check task_ID is an int
                 task_ID = int(splited_sentence[1])
-                if task_ID not in toDos.keys(
-                ):  # if task_ID not in toDos then edit no task and warn user
-                    await message.channel.send(
-                        f'no task is associated with the ID {task_ID}    :dizzy_face:'
-                    )
+                if task_ID not in toDos.keys():                 # if task_ID not in toDos then edit no task and warn user
+                    await message.channel.send(f'no task is associated with the ID {task_ID}    :dizzy_face:')
                     return
                 else:
-                    print(f'there is a task associated with the ID {task_ID}'
-                          )  # debug
-                    print(toDos)
-                    new_task = ''  # store the new task
-                    time_idx = 0  # specifies the index of time in splited_sentence
+                    if debug: print(f'there is a task associated with the ID {task_ID}')  # debug
+                    new_task = ''                                 # store the new task
+                    time_idx = 0                                  # specifies the index of time in splited_sentence
 
                     # get the task details and the time
                     for i in range(3, len(splited_sentence)):
@@ -160,19 +152,17 @@ async def on_message(message):
                     is_match = bool(matched)
                     if is_match:
                         edited_entry = (new_task, time)
-                        toDos[
-                            task_ID] = edited_entry  # new entry is entered as a tuple
+                        toDos[task_ID] = edited_entry              # new entry is entered as a tuple
                     else:
-                        await message.channel.send(
-                            'The time format you inputted is not correct    :eyes:'
-                        )
+                        await message.channel.send('Your edit message is not formatted correctly.' +
+                        '\nYou are probably missing an "at" before your task time.' +
+                        '\nType "help" to see how to edit your tasks.       :eyes:')
                         return
             else:
-                await message.channel.send(
-                    'The time format you inputted is not correct    :eyes:')
+                await message.channel.send('Your edit message is not formatted correctly. Type help.    :eyes:')
                 return
-        print('After:')  # debug = just to show the task has been edited
-        print(toDos)  # debug - just to show the task has been edited
+        if debug: print('After:')  # debug = just to show the task has been edited
+        if debug: print(toDos)  # debug - just to show the task has been edited
         await message.channel.send('your task has been edited   🙂')
     # -----------------------------------------------------------------------------------------------------------
     #help:
