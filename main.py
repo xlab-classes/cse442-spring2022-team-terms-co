@@ -67,7 +67,7 @@ async def on_message(message):
         print(toDos, " counter incremented")
         taskID = toDos[0]
         print(taskID, " task ID")
-        toDos[taskID] = (message.content[0:split_index], tim_e)
+        toDos[taskID] = (message.content[13:split_index], tim_e)
         print(toDos)
         await message.channel.send(replies[random.randrange(len(replies))])
 
@@ -165,18 +165,18 @@ async def on_message(message):
         if debug: print(toDos)  # debug - just to show the task has been edited
         await message.channel.send('your task has been edited   🙂')
     # -----------------------------------------------------------------------------------------------------------
-    #help:
-    # Rami's code:----------------------------------------------------------------------------------------------
-
 
 # Rami's code:-----------------------------------------------------------------------------------------------
     elif message.content.startswith('help'):
         embed = discord.Embed(
-            title="Help",  #url="https://realdrewdata.medium.com/",
+            title="Help",
             description="I support the following commands:\n"
-            ":one: " + "edit to edit an existing task\n" + ":two: " +
-            " 'remind me to...at' add a new task\n" + ":three: " +
-            "view all to see all the tasks you scheduled\n",
+            ":one: " + "add a task by typing \"remind me to \'task\' at \'time\'\n" +
+            ":two: " + "delete a task by typing \"delete task_ID\"\n" +
+            ":three: " + "edit a task by typing \"edit task_ID : new_task task_time\" for example \"edit 1 : remind me to sleep at 9 pm\"\n" +
+            ":four: " + "check all tasks you completed by typing \"completed\"\n" +
+            ":five: " + "view all tasks you scheduled by typing \"view\"\n" +
+            ":bulb: " + "do you know that you can get any task_ID by typing \"view\"",
             color=0xFF5733)
         await message.add_reaction("👍🏾")
         await message.channel.send(embed=embed)
