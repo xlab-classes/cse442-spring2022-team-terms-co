@@ -1,8 +1,10 @@
+
 import keep_alive
 import os
+import random
 import re
 import discord
-import random
+
 
 intents = discord.Intents.default()
 intents.members = True
@@ -29,15 +31,17 @@ async def on_ready():
 async def on_member_join(member):
     await member.send('hi')
 
+
 @client.event
 async def on_message(message):
     if message.author == client.user:
         return
+# Snigdha's code:********************************************************************************************************
     #add task
     if message.content.startswith('remind me to') and ' at' in message.content:
         split_index = message.content.find(' at')
         print(split_index)
-        tim_e = message.content[split_index + 3:]
+        tim_e = message.content[split_index + 3:].replace(' ','')
         print(tim_e)
         #.*([0-9]\s?[AM|am|PM|pm]+)
         # time format to handle 5 : 15am
@@ -57,8 +61,10 @@ async def on_message(message):
         toDos[taskID] = (message.content[13:split_index], tim_e)
         print(toDos)
         await message.channel.send(replies[random.randrange(len(replies))])
+#***********************************************************************************************************************
 
-    #delete taskID
+# Tanvie's code:********************************************************************************************************
+    # delete task
     elif message.content.startswith('delete '):
         split_index = 7
         print(split_index)
@@ -76,8 +82,10 @@ async def on_message(message):
             await message.channel.send("No such task exists")
             return
         print(toDos)
+#***********************************************************************************************************************
 
-    #complete
+# Mike's code:**********************************************************************************************************
+    #completed task:
     elif 'completed' in message.content:
         message_id = int(message.content[message.content.find(' id=') + 4:])
         print("ID completed: ", message_id)
@@ -86,12 +94,14 @@ async def on_message(message):
         completed[message_id] = completed_task
         print(completed)
         await message.channel.send(m)
+#***********************************************************************************************************************
 
-    #view
+# Elijah's code:********************************************************************************************************
+    #view task:
     elif message.content.startswith('view'):
         ids = (list(toDos))
         completed_ids = (list(completed))
-        # await message.channel.send('you have '+ str(len(ids)-1) +' tasks in progress and '+ str(len(completed_ids)) +' tasks completed')
+        #await message.channel.send('you have '+ str(len(ids)-1) +' tasks in progress and '+ str(len(completed_ids)) +' tasks completed')
         # await message.channel.send('In Progress:')
         ip = ''
         comp =''
@@ -102,13 +112,16 @@ async def on_message(message):
                 ip+='➼ ID:' + str(id) + '| '+ toDos[id][0]+' at '+ toDos[id][1]+'\n'
             await message.channel.send('In Progress:\n'+ip)
         if len(completed_ids) <=0:
-            await message.channel.send("No completed tasks type 'help' to learn how to complete task!")
+            await message.channel.send("No completed tasks type 'help' to learn how to complete a task!")
         else:    
             for cid in completed_ids:
                 comp+='➼ ID:' + str(cid) + '| '+ completed[cid][0]+' at '+ completed[cid][1]+'\n'
             await message.channel.send('Completed:\n' +comp)
 
-    # Rami's code:-----------------------------------------------------------------------------------------------
+#***********************************************************************************************************************
+
+# Rami's code:**********************************************************************************************************
+    #edit task:
     elif message.content.startswith('edit'):
         debug = False                                           # if debugging, make True
         if debug: print('Before:')                              # debug
@@ -155,23 +168,23 @@ async def on_message(message):
         if debug: print('After:')  # debug = just to show the task has been edited
         if debug: print(toDos)  # debug - just to show the task has been edited
         await message.channel.send('your task has been edited   🙂')
-    # -----------------------------------------------------------------------------------------------------------
+#***********************************************************************************************************************
 
-# Rami's code:-----------------------------------------------------------------------------------------------
+# Rami's code:**********************************************************************************************************
     elif message.content.startswith('help'):
         embed = discord.Embed(
             title="Help",
             description="I support the following commands:\n"
             ":one: " + "add a task by typing \"remind me to \'task\' at \'time\'\n" +
             ":two: " + "delete a task by typing \"delete task_ID\"\n" +
-            ":three: " + "edit a task by typing \"edit task_ID : new_task task_time\" for example \"edit 1 : remind me to sleep at 9 pm\"\n" +
-            ":four: " + "check all tasks you completed by typing \"completed\"\n" +
+            ":three: " + "edit a task by typing \"edit task_ID : new_task task_time\", make sure there are no spaces in the time (9:00pm) for example \"edit 1 : remind me to sleep at 9pm\"\n" +
+            ":four: " + "check all tasks you completed by typing \"completed id=taskid\"\n" +
             ":five: " + "view all tasks you scheduled by typing \"view\"\n" +
             ":bulb: " + "do you know that you can get any task_ID by typing \"view\"",
             color=0xFF5733)
         await message.add_reaction("👍🏾")
         await message.channel.send(embed=embed)
-    # -----------------------------------------------------------------------------------------------------------
+#***********************************************************************************************************************
     else:
         await message.channel.send(
             "Invalid format. Send a message 'help' for assistance with valid formats."
