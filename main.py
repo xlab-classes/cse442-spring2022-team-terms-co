@@ -98,12 +98,24 @@ async def on_message(message):
 
     #view
     elif message.content.startswith('view'):
-        await message.channel.send('In Progress:')
-        for key, value in toDos.items():
-            #print(value, 'at', key)
-            #toDos =  { taskID: (task_details, tim_e) }
-            await message.channel.send('  ➼' + value + ' at ' + str(key))
-        await message.channel.send('Completed:')
+        ids = (list(toDos))
+        completed_ids = (list(completed))
+        # await message.channel.send('you have '+ str(len(ids)-1) +' tasks in progress and '+ str(len(completed_ids)) +' tasks completed')
+        # await message.channel.send('In Progress:')
+        ip = ''
+        comp =''
+        if len(ids) <=1:
+            await message.channel.send("No tasks in progress type 'help' to learn how to add a task!")
+        else:    
+            for id in ids[1:]:
+                ip+='➼ ID:' + str(id) + '| '+ toDos[id][0]+' at '+ toDos[id][1]+'\n'
+            await message.channel.send('In Progress:\n'+ip)
+        if len(completed_ids) <=0:
+            await message.channel.send("No completed tasks type 'help' to learn how to complete task!")
+        else:    
+            for cid in completed_ids:
+                comp+='➼ ID:' + str(cid) + '| '+ completed[cid][0]+' at '+ completed[cid][1]+'\n'
+            await message.channel.send('Completed:\n' +comp)
 
     # Rami's code:-----------------------------------------------------------------------------------------------
     elif message.content.startswith('edit'):
