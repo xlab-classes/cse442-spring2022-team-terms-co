@@ -12,7 +12,7 @@ _3) Edit existing tasks_\
         - edit a task by typing "edit task_ID : new_task task_time" for example "edit 1: remind me to sleep at 9 pm"
 
 _4) Check all completed tasks_\
-        - type "completed"
+        - type "completed 1" where 1 is the taskID which can be viewed using "view"
 
 _5) View all tasks_\
         - type "view" to view all tasks and their IDs
