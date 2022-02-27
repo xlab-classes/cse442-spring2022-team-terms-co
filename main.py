@@ -1,8 +1,11 @@
+# Author: Tanvie Kirane
+
 import keep_alive
 import os
+import random
 import re
 import discord
-import random
+
 
 intents = discord.Intents.default()
 intents.members = True
@@ -20,7 +23,6 @@ replies = [
     "Rest assured! ", "Noted! "
 ]
 
-
 @client.event
 async def on_ready():
     print(f'{client.user.name} has connected to Discord!')
@@ -31,26 +33,16 @@ async def on_member_join(member):
     await member.send('hi')
 
 
-#Given a message ID this sends a recieved message
-#Additionally remove this message from the TODO list and add it to completed
-def completed(message_id):
-    print("ID completed: ", message_id)
-    m = "Congrats on completing task: " + str(message_id)
-    completed_task = toDos.pop(message_id)
-    completed[message_id] = completed_task
-    return m
-    #add the task to completed tasks and remove it from toDos
-
-
 @client.event
 async def on_message(message):
     if message.author == client.user:
         return
+# Snigdha's code:********************************************************************************************************
     #add task
     if message.content.startswith('remind me to') and ' at' in message.content:
         split_index = message.content.find(' at')
         print(split_index)
-        tim_e = message.content[split_index + 3:]
+        tim_e = message.content[split_index + 3:].replace(' ','')
         print(tim_e)
         #.*([0-9]\s?[AM|am|PM|pm]+)
         # time format to handle 5 : 15am
@@ -67,11 +59,13 @@ async def on_message(message):
         print(toDos, " counter incremented")
         taskID = toDos[0]
         print(taskID, " task ID")
-        toDos[taskID] = (message.content[0:split_index], tim_e)
+        toDos[taskID] = (message.content[13:split_index], tim_e)
         print(toDos)
         await message.channel.send(replies[random.randrange(len(replies))])
+#***********************************************************************************************************************
 
-    #delete taskID
+# Tanvie's code:********************************************************************************************************
+    # delete task
     elif message.content.startswith('delete '):
         split_index = 7
         print(split_index)
@@ -89,49 +83,64 @@ async def on_message(message):
             await message.channel.send("No such task exists")
             return
         print(toDos)
+#***********************************************************************************************************************
 
-    #complete
+# Mike's code:**********************************************************************************************************
+    #completed task:
     elif 'completed' in message.content:
-        completed_message = completed(
-            int(message.content[message.content.find(' id=') + 4:]))
-        await message.channel.send(completed_message)
+        message_id = int(message.content[message.content.find(' id=') + 4:])
+        print("ID completed: ", message_id)
+        m = "Congrats on completing task: " + str(message_id)
+        completed_task = toDos.pop(message_id)
+        completed[message_id] = completed_task
+        print(completed)
+        await message.channel.send(m)
+#***********************************************************************************************************************
 
-    #view
+# Elijah's code:********************************************************************************************************
+    #view task:
     elif message.content.startswith('view'):
-        await message.channel.send('In Progress:')
-        for key, value in toDos.items():
-            #print(value, 'at', key)
-            #toDos =  { taskID: (task_details, tim_e) }
-            await message.channel.send('  ➼' + value + ' at ' + str(key))
-        await message.channel.send('Completed:')
+        ids = (list(toDos))
+        completed_ids = (list(completed))
+        #await message.channel.send('you have '+ str(len(ids)-1) +' tasks in progress and '+ str(len(completed_ids)) +' tasks completed')
+        # await message.channel.send('In Progress:')
+        ip = ''
+        comp =''
+        if len(ids) <=1:
+            await message.channel.send("No tasks in progress type 'help' to learn how to add a task!")
+        else:    
+            for id in ids[1:]:
+                ip+='➼ ID:' + str(id) + '| '+ toDos[id][0]+' at '+ toDos[id][1]+'\n'
+            await message.channel.send('In Progress:\n'+ip)
+        if len(completed_ids) <=0:
+            await message.channel.send("No completed tasks type 'help' to learn how to complete a task!")
+        else:    
+            for cid in completed_ids:
+                comp+='➼ ID:' + str(cid) + '| '+ completed[cid][0]+' at '+ completed[cid][1]+'\n'
+            await message.channel.send('Completed:\n' +comp)
 
-    # Rami's code:-----------------------------------------------------------------------------------------------
+#***********************************************************************************************************************
+
+# Rami's code:**********************************************************************************************************
+    #edit task:
     elif message.content.startswith('edit'):
-        # print('Before:')  # debug
-        # print(toDos)  # debug
+        debug = False                                           # if debugging, make True
+        if debug: print('Before:')                              # debug
+        if debug: print(toDos)                                  # debug
         user_msg = message.content
-        # print(user_msg)  # get the user message
-        splited_sentence = user_msg.split(
-        )  # split the user message into a list
-        if splited_sentence[0].lower() in [
-                "edit", "!edit"
-        ]:  # check that the user message is an edit request
-            task_ID = splited_sentence[
-                1]  # get the task_ID of the task-to-edit
-            if task_ID.isdigit():  # check task_ID is an int
+        if debug: print(user_msg)                               # debug
+        splited_sentence = user_msg.split()                     # split the user message into a list
+        if splited_sentence[0].lower() in ["edit", "!edit"]:
+            task_ID = splited_sentence[1]                       # get the task_ID of the task-to-edit
+            if task_ID.isdigit():                               # check task_ID is an int
                 task_ID = int(splited_sentence[1])
-                if task_ID not in toDos.keys(
-                ):  # if task_ID not in toDos then edit no task and warn user
-                    await message.channel.send(
-                        f'no task is associated with the ID {task_ID}    :dizzy_face:'
-                    )
+                if task_ID not in toDos.keys():                 # if task_ID not in toDos then edit no task and warn user
+                    await message.channel.send(f'no task is associated with the ID {task_ID}    :dizzy_face:')
                     return
                 else:
-                    print(f'there is a task associated with the ID {task_ID}'
-                          )  # debug
-                    print(toDos)
-                    new_task = ''  # store the new task
-                    time_idx = 0  # specifies the index of time in splited_sentence
+                    if debug: print(f'there is a task associated with the ID {task_ID}')  # debug
+                    new_task = ''                                 # store the new task
+                    time_idx = 0                                  # specifies the index of time in splited_sentence
 
                     # get the task details and the time
                     for i in range(3, len(splited_sentence)):
@@ -148,37 +157,35 @@ async def on_message(message):
                     is_match = bool(matched)
                     if is_match:
                         edited_entry = (new_task, time)
-                        toDos[
-                            task_ID] = edited_entry  # new entry is entered as a tuple
+                        toDos[task_ID] = edited_entry              # new entry is entered as a tuple
                     else:
-                        await message.channel.send(
-                            'The time format you inputted is not correct    :eyes:'
-                        )
+                        await message.channel.send('Your edit message is not formatted correctly.' +
+                        '\nYou are probably missing an "at" before your task time.' +
+                        '\nType "help" to see how to edit your tasks.       :eyes:')
                         return
             else:
-                await message.channel.send(
-                    'The time format you inputted is not correct    :eyes:')
+                await message.channel.send('Your edit message is not formatted correctly. Type help.    :eyes:')
                 return
-        print('After:')  # debug = just to show the task has been edited
-        print(toDos)  # debug - just to show the task has been edited
+        if debug: print('After:')  # debug = just to show the task has been edited
+        if debug: print(toDos)  # debug - just to show the task has been edited
         await message.channel.send('your task has been edited   🙂')
-    # -----------------------------------------------------------------------------------------------------------
-    #help:
-    # Rami's code:----------------------------------------------------------------------------------------------
+#***********************************************************************************************************************
 
-
-# Rami's code:-----------------------------------------------------------------------------------------------
+# Rami's code:**********************************************************************************************************
     elif message.content.startswith('help'):
         embed = discord.Embed(
-            title="Help",  #url="https://realdrewdata.medium.com/",
+            title="Help",
             description="I support the following commands:\n"
-            ":one: " + "edit to edit an existing task\n" + ":two: " +
-            " 'remind me to...at' add a new task\n" + ":three: " +
-            "view all to see all the tasks you scheduled\n",
+            ":one: " + "add a task by typing \"remind me to \'task\' at \'time\'\n" +
+            ":two: " + "delete a task by typing \"delete task_ID\"\n" +
+            ":three: " + "edit a task by typing \"edit task_ID : new_task task_time\", make sure there are no spaces in the time (9:00pm) for example \"edit 1 : remind me to sleep at 9pm\"\n" +
+            ":four: " + "check all tasks you completed by typing \"completed id=taskid\"\n" +
+            ":five: " + "view all tasks you scheduled by typing \"view\"\n" +
+            ":bulb: " + "do you know that you can get any task_ID by typing \"view\"",
             color=0xFF5733)
         await message.add_reaction("👍🏾")
         await message.channel.send(embed=embed)
-    # -----------------------------------------------------------------------------------------------------------
+#***********************************************************************************************************************
     else:
         await message.channel.send(
             "Invalid format. Send a message 'help' for assistance with valid formats."
