@@ -20,7 +20,6 @@ replies = [
     "Rest assured! ", "Noted! "
 ]
 
-
 @client.event
 async def on_ready():
     print(f'{client.user.name} has connected to Discord!')
@@ -29,18 +28,6 @@ async def on_ready():
 @client.event
 async def on_member_join(member):
     await member.send('hi')
-
-
-#Given a message ID this sends a recieved message
-#Additionally remove this message from the TODO list and add it to completed
-def completed(message_id):
-    print("ID completed: ", message_id)
-    m = "Congrats on completing task: " + str(message_id)
-    completed_task = toDos.pop(message_id)
-    completed[message_id] = completed_task
-    return m
-    #add the task to completed tasks and remove it from toDos
-
 
 @client.event
 async def on_message(message):
@@ -92,9 +79,13 @@ async def on_message(message):
 
     #complete
     elif 'completed' in message.content:
-        completed_message = completed(
-            int(message.content[message.content.find(' id=') + 4:]))
-        await message.channel.send(completed_message)
+        message_id = int(message.content[message.content.find(' id=') + 4:])
+        print("ID completed: ", message_id)
+        m = "Congrats on completing task: " + str(message_id)
+        completed_task = toDos.pop(message_id)
+        completed[message_id] = completed_task
+        print(completed)
+        await message.channel.send(m)
 
     #view
     elif message.content.startswith('view'):
