@@ -21,7 +21,6 @@ replies = [
     "Rest assured! ", "Noted! "
 ]
 
-
 @client.event
 async def on_ready():
     print(f'{client.user.name} has connected to Discord!')
@@ -35,7 +34,7 @@ async def on_member_join(member):
 async def on_message(message):
     if message.author == client.user:
         return
-    #add task
+    #add
     if message.content.startswith('remind me to') and ' at' in message.content:
         split_index = message.content.find(' at')
         #print(split_index)
@@ -59,7 +58,7 @@ async def on_message(message):
         print(toDos)
         await message.channel.send(replies[random.randrange(len(replies))])
 
-    #delete taskID
+    #delete
     elif message.content.startswith('delete '):
         split_index = 7
         #print(split_index)
@@ -90,28 +89,55 @@ async def on_message(message):
     
     #view
     elif message.content.startswith('view'):
+        sent =''
         ids = (list(toDos))
         completed_ids = (list(completed))
-#        await message.channel.send('you have '+ str(len(ids)-1) +' tasks in progress and '+ str(len(completed_ids)) +' tasks completed')
-        # await message.channel.send('In Progress:')
+        todos_len = len(ids)-1
+        completed_len= len(completed_ids)
+        if todos_len == 1:
+            todo_tasks= ' task '
+        else:
+            todo_tasks=' tasks '
+        if completed_len == 1:
+            completed_tasks= ' task '
+        else:
+            completed_tasks=' tasks '            
+        view_title='You have '+ str(todos_len) + todo_tasks +'in progress and '+ str(completed_len) + completed_tasks + 'completed'
         ip = ''
         comp =''
         if len(ids) <=1:
-            await message.channel.send("No tasks in progress type 'help' to learn how to add a task!")
+            sent ="No tasks in progress type 'help' to learn how to add a task!"
         else:    
             for id in ids[1:]:
                 ip+='➼ ID:' + str(id) + '| '+ toDos[id][0]+' at '+ toDos[id][1]+'\n'
-            await message.channel.send('In Progress:\n'+ip)
+                sent = 'In Progress:\n'+ip
         if len(completed_ids) <=0:
-            await message.channel.send("No completed tasks type 'help' to learn how to complete task!")
+            send = "No completed tasks type 'help' to learn how to complete a task!"
         else:    
             for cid in completed_ids:
                 comp+='➼ ID:' + str(cid) + '| '+ completed[cid][0]+' at '+ completed[cid][1]+'\n'
-            await message.channel.send('Completed:\n' +comp)
+            send = 'Completed:\n' +comp
+        embed = discord.Embed(
+            title =view_title,
+            description = sent+'\n'+send,
+        color =0x7214E3
+        )
+        await message.channel.send(embed=embed)
 
+    #clear all
+    elif message.content.startswith('clear all tasks') or message.content.startswith('clear'):
+        ids = list(toDos)
+        completed_ids = list(completed)
+        for i in ids[1:]:
+            toDos.pop(i)  
+        for i in completed_ids:
+            completed.pop(i)  
+        if len(ids+completed_ids) <=1:
+            await message.channel.send("You dont have any tasks to clear 🙃")
+        else:
+            await message.channel.send("OK all your tasks are cleared 🙂")
 
-
-    # Rami's code:-----------------------------------------------------------------------------------------------
+    #edit
     elif message.content.startswith('edit'):
         debug = False                                           # if debugging, make True
         if debug: print('Before:')                              # debug
@@ -139,7 +165,7 @@ async def on_message(message):
                         else:
                             new_task += splited_sentence[i] + ' '
 
-                    time = splited_sentence[time_idx].replace(' ','')
+                    time = splited_sentence[time_idx]
 
                     # before storing the time to toDos, check if it is formatted correctly:
                     matched = re.match(".*([0-9]\s?[AM|am|PM|pm]+)", time)
@@ -158,23 +184,20 @@ async def on_message(message):
         if debug: print('After:')  # debug = just to show the task has been edited
         if debug: print(toDos)  # debug - just to show the task has been edited
         await message.channel.send('your task has been edited   🙂')
-    # -----------------------------------------------------------------------------------------------------------
-    #help:
-    # Rami's code:----------------------------------------------------------------------------------------------
 
-
-# Rami's code:-----------------------------------------------------------------------------------------------
     elif message.content.startswith('help'):
         embed = discord.Embed(
-            title="Help",  #url="https://realdrewdata.medium.com/",
+            title="Help",
             description="I support the following commands:\n"
-            ":one: " + "edit to edit an existing task\n" + ":two: " +
-            " 'remind me to...at' add a new task\n" + ":three: " +
-            "view all to see all the tasks you scheduled\n",
+            ":one: " + "add a task by typing \"remind me to \'task\' at \'time\'\n" +
+            ":two: " + "delete a task by typing \"delete task_ID\"\n" +
+            ":three: " + "edit a task by typing \"edit task_ID : new_task task_time\", make sure there are no spaces in the time (9:00pm) for example \"edit 1 : remind me to sleep at 9pm\"\n" +
+            ":four: " + "check all tasks you completed by typing \"completed id=taskid\"\n" +
+            ":five: " + "view all tasks you scheduled by typing \"view\"\n" +
+            ":bulb: " + "do you know that you can get any task_ID by typing \"view\"",
             color=0xFF5733)
         await message.add_reaction("👍🏾")
         await message.channel.send(embed=embed)
-    # -----------------------------------------------------------------------------------------------------------
     else:
         await message.channel.send(
             "Invalid format. Send a message 'help' for assistance with valid formats."
