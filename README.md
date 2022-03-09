@@ -4,8 +4,11 @@ This bot allows our users to have a friend that helps them organize their tasks.
 
 _1) Add a task_\
         - Example: "remind me to sleep at 10:00 pm" or "remind me to run at 6pm". This task gets assigned a taskID which the user is informed of and can double check at any time by typing 'view'. 
+        
         - Example: "remind me to sleep"        
+        
                         > the bot will ask at what time
+                        
                    provide time 
 
 _2) Delete a task_\
