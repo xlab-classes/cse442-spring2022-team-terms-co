@@ -1,3 +1,4 @@
+from collections import defaultdict
 import keep_alive
 import os
 import random
@@ -11,7 +12,7 @@ client = discord.Client(intents=discord.Intents.all())
 #Read the private key from a local file
 TOKEN = os.environ['TOKEN']
 toDos = {0: 0, -1: ''}
-completed = {}
+completed = defaultdict(list)
 
 #Nested Dictionary that keeps track of usernames first
 user_dict = {}
@@ -65,8 +66,11 @@ async def on_message(message):
         #Mike's addition to add
         #Should function independently of other code
         print(message.author.name)
-        user_dict[int(message.author.id)] = (message.content[13:split_index].strip(), tim_e)
-        print(user_dict)
+        if message.author.id not in user_dict:
+            user_dict[int(message.author.id)] = [(taskID, message.content[13:split_index].strip(), tim_e)]
+        else:
+            user_dict[int(message.author.id)] += [(taskID, message.content[13:split_index].strip(), tim_e)]
+        print("User specific dict: " , user_dict)
 
         print(toDos)
         await message.channel.send(replies[random.randrange(len(replies))] + ". The task ID is " + str(taskID))
@@ -143,6 +147,19 @@ async def on_message(message):
         completed[message_id] = completed_task
         print(completed)
         await message.channel.send(m)
+   
+    elif message.content.startswith('userview'):
+        user_send =""
+        author = message.author.id
+        if author in user_dict:
+            for item in user_dict[author]:
+                user_send+="ID: " + str(item[0])+ " Task: " + item[1] +" Time: " + str(item[2]) + " author id: " + str(author)+  "\n"
+            await message.channel.send(user_send)
+        else:
+            await message.channel.send("You have no stored tasks")
+
+
+
 #***********************************************************************************************************************
 
 # Elijah's code:********************************************************************************************************
@@ -197,6 +214,8 @@ async def on_message(message):
             await message.channel.send("You dont have any tasks to clear 🙃")
         else:
             await message.channel.send("OK all your tasks are cleared 🙂")
+
+    
 
 #***********************************************************************************************************************
 
