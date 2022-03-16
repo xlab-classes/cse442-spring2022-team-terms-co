@@ -32,7 +32,7 @@ def on_ready():
 @client.event
 @asyncio.coroutine
 def on_member_join(member):
-    await member.send('hi')
+    await member.channel.send('hi')
 
 
 @client.event
