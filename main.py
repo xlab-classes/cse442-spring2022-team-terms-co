@@ -22,18 +22,15 @@ replies = [
 ]
 
 @client.event
-@asyncio.coroutine
-def on_ready():
+async def on_ready():
     print(client.user.name, ' has connected to Discord!')
 
 @client.event
-@asyncio.coroutine
-def on_member_join(member):
-    yielf from member.send('hi')
+async def on_member_join(member):
+    await member.send('hi')
 
 @client.event
-@asyncio.coroutine
-def on_message(message):
+async def on_message(message):
     if message.author == client.user:
         return
 # Snigdha's code:********************************************************************************************************
@@ -52,7 +49,7 @@ def on_message(message):
         print(matched)
         is_match = bool(matched)
         if not is_match:
-            yield from message.channel.send(
+            await message.channel.send(
                 "Invalid format. Send a message 'help' for assistance with valid formats."
             )
             return
@@ -63,14 +60,14 @@ def on_message(message):
         print(taskID, " task ID")
         toDos[taskID] = (message.content[13:split_index].strip(), tim_e)
         print(toDos)
-        yield from message.channel.send(replies[random.randrange(len(replies))] + ". The task ID is " + str(taskID))
+        await message.channel.send(replies[random.randrange(len(replies))] + ". The task ID is " + str(taskID))
         return
       else:
         split_index = message.content.find(' to')
         task = message.content[split_index + 3:].replace(' ','').strip()
         toDos[-1] = task
         print(toDos)
-        yield from message.channel.send(
+        await message.channel.send(
                 "At what time? Example: 9am/9PM/6:13am"
           )
         return
@@ -83,7 +80,7 @@ def on_message(message):
       print(taskID, " task ID")
       toDos[taskID] = (toDos[-1], message.content)
       print(toDos, " counter incremented")
-      yield from message.channel.send(replies[random.randrange(len(replies))] + ". The task ID is " + str(taskID))
+      await message.channel.send(replies[random.randrange(len(replies))] + ". The task ID is " + str(taskID))
       return
         
 #***********************************************************************************************************************
