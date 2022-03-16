@@ -26,7 +26,7 @@ replies = [
 @client.event
 @asyncio.coroutine
 def on_ready():
-    print(f'{client.user.name} has connected to Discord!')
+    print(client.user.name, ' has connected to Discord!')
 
 
 @client.event
@@ -138,10 +138,10 @@ def on_message(message):
             if task_ID.isdigit():                               # check task_ID is an int
                 task_ID = int(splited_sentence[1])
                 if task_ID not in toDos.keys():                 # if task_ID not in toDos then edit no task and warn user
-                    await message.channel.send(f'no task is associated with the ID {task_ID}    :dizzy_face:')
+                    await message.channel.send('no task is associated with the ID ', task_ID,    ' :dizzy_face:')
                     return
                 else:
-                    if debug: print(f'there is a task associated with the ID {task_ID}')  # debug
+                    if debug: print('there is a task associated with the ID ', task_ID)  # debug
                     new_task = ''                                 # store the new task
                     time_idx = 0                                  # specifies the index of time in splited_sentence
 
