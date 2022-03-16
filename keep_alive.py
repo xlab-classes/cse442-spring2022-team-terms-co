@@ -1,12 +1,12 @@
 from flask import Flask
 from threading import Thread
 
-app = Flask('')
+app = Flask(__name__, static_url_path='/static')
 
 
 @app.route('/')
 def main():
-    return "Your bot is alive!"
+    return render_template("index.html")
 
 
 def run():
