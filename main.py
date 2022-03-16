@@ -6,8 +6,7 @@ import discord
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
 from time_manager import process_input_time
-from time_manager import time_to_military
- 
+from time_manager import time_to_mili
 
 intents = discord.Intents.default()
 intents.members = True
@@ -58,7 +57,7 @@ def delete(id):
 
 @client.event
 async def on_ready():
-    print(f'{client.user.name} has connected to Discord!')
+    print(client.user.name, ' has connected to Discord!')
 
 @client.event
 async def on_member_join(member):
