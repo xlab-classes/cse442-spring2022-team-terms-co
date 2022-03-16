@@ -4,6 +4,7 @@ import os
 import random
 import re
 import discord
+import asyncio
 
 
 intents = discord.Intents.default()
@@ -23,17 +24,20 @@ replies = [
 ]
 
 @client.event
-async def on_ready():
+@asyncio.coroutine
+def on_ready():
     print(f'{client.user.name} has connected to Discord!')
 
 
 @client.event
-async def on_member_join(member):
+@asyncio.coroutine
+def on_member_join(member):
     await member.send('hi')
 
 
 @client.event
-async def on_message(message):
+@asyncio.coroutine
+def on_message(message):
     if message.author == client.user:
         return
 # Snigdha's code:********************************************************************************************************
