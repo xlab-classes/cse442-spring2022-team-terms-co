@@ -3,7 +3,10 @@ import os
 import random
 import re
 import discord
-import asyncio
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from apscheduler.triggers.cron import CronTrigger
+from time_manager import process_input_time
+from time_manager import time_to_mili
 
 intents = discord.Intents.default()
 intents.members = True
@@ -20,6 +23,37 @@ replies = [
     "Great ", "Awesome ", "Good going! ", " Attayou! ", "What a champ! ",
     "Rest assured! ", "Noted! "
 ]
+# AsyncIOScheduler() is to be used to send the user messages in real-time:
+scheduler = AsyncIOScheduler()          # initialize the scheduler
+scheduler.start()                       # start the schedule
+
+async def func(msg, task_details, task_time):
+    """
+    A function to be added to the scheduler when a job is added. This function sends an embed messagem notifying the
+    user of the task they scheduled.
+    """
+    await client.wait_until_ready()
+    await send_embed_message(msg, task_details, task_time)
+
+async def send_embed_message(msg, task_details, task_time):
+    """
+        A function to generate an embed message template containing the details of a task previously scheduled
+        by the user
+    """
+    embed = discord.Embed(
+        title="Event Details",
+        description="Task Description: " + task_details + "\n"
+                    + "\n"
+                   + ":clock1: " + task_time + "\n",
+        color=0xEABBC2)#0x6A5ACD
+    #await c.send(embed=embed)
+    await msg.channel.send(embed=embed)
+
+#create a func to delete message
+#call it in delete and clear all
+def delete(id):
+    scheduler.remove_job(id)
+    scheduler.print_jobs()
 
 @client.event
 async def on_ready():
@@ -33,6 +67,7 @@ async def on_member_join(member):
 async def on_message(message):
     if message.author == client.user:
         return
+  
 # Snigdha's code:********************************************************************************************************
     #add task
     regexCheck = re.match(".*(?![remind me to]).+", message.content)
@@ -40,13 +75,13 @@ async def on_message(message):
     if bool(regexCheck) and remindMeCheck:
       if ' at' in message.content:
         split_index = message.content.find(' at')
-        print(split_index)
+        #print(split_index)
         tim_e = message.content[split_index + 3:].replace(' ','')
-        print(tim_e)
+        #print(tim_e)
         #.*([0-9]\s?[AM|am|PM|pm]+)
         # time format to handle 5 : 15am
         matched = re.match(".*([0-9]\s?[AM|am|PM|pm]+)", tim_e)
-        print(matched)
+        #print(matched)
         is_match = bool(matched)
         if not is_match:
             await message.channel.send(
@@ -56,11 +91,23 @@ async def on_message(message):
         taskID = toDos[0] + 1
         toDos[0] = taskID
         toDos[-1] = message.content[12:split_index]
-        print(toDos)
-        print(taskID, " task ID")
+        #print(toDos)
+        #print(taskID, " task ID")
         toDos[taskID] = (message.content[13:split_index].strip(), tim_e)
         print(toDos)
         await message.channel.send(replies[random.randrange(len(replies))] + ". The task ID is " + str(taskID))
+    # Rami's Addition:------------------------------------------------------------------------------------------
+        print('channel: ' + str(message.channel))
+        user_time = process_input_time(tim_e)
+
+        military_time = time_to_military(user_time)
+        time_hrs = military_time[0] + military_time[1]
+        time_mins = military_time[3] + military_time[4]
+        task_details = toDos[taskID][0]
+        scheduler.add_job(func, CronTrigger(hour=time_hrs, minute=time_mins, second="0"),(message, task_details, military_time,), id=str(taskID)) # old
+        scheduler.print_jobs()
+          
+     # ----------------------------------------------------------------------------------------------------------    
         return
       else:
         split_index = message.content.find(' to')
@@ -89,7 +136,7 @@ async def on_message(message):
     # delete task
     elif message.content.startswith('delete '):
         split_index = 7
-        print(split_index)
+        #print(split_index)
         to_del = message.content[split_index:]
         #the task ID to delete is to_del
         print(to_del)
@@ -99,6 +146,7 @@ async def on_message(message):
             )
         elif int(to_del) in toDos:
             toDos.pop(int(to_del.strip()))
+            delete(to_del)
             await message.channel.send("You have successfully deleted a task!")
         elif int(to_del) in completed:
             completed.pop(int(to_del.strip()))
@@ -133,6 +181,7 @@ async def on_message(message):
         completed_task = toDos.pop(message_id)
         completed[message_id] = completed_task
         print(completed)
+        delete(str(message_id))
         await message.channel.send(m)
 #***********************************************************************************************************************
 
@@ -159,13 +208,13 @@ async def on_message(message):
             sent ="No tasks in progress type 'help' to learn how to add a task!"
         else:    
             for id in ids[2:]:
-                ip+='➼ ID:' + str(id) + '| '+ toDos[id][0]+' at '+ toDos[id][1]+'\n'
+                ip+='•ID:' + str(id) + '| '+ toDos[id][0]+' at '+ toDos[id][1]+'\n'
                 sent = 'In Progress:\n'+ip
         if len(completed_ids) <=0:
             send = "No completed tasks type 'help' to learn how to complete a task!"
         else:    
             for cid in completed_ids:
-                comp+='➼ ID:' + str(cid) + '| '+ completed[cid][0]+' at '+ completed[cid][1]+'\n'
+                comp+='•ID:' + str(cid) + '| '+ completed[cid][0]+' at '+ completed[cid][1]+'\n'
             send = 'Completed:\n' +comp
         embed = discord.Embed(
             title =view_title,
@@ -173,6 +222,22 @@ async def on_message(message):
         color =0x7214E3
         )
         await message.channel.send(embed=embed)
+
+#***********************************************************************************************************************
+# Elijah's code:********************************************************************************************************
+    #clear all
+    elif message.content.startswith('clear all tasks') or message.content.startswith('clear'):
+        ids = list(toDos)
+        completed_ids = list(completed)
+        for i in ids[2:]:
+            toDos.pop(i)
+            delete(str(i))
+        for i in completed_ids:
+            completed.pop(i)  
+        if len(ids+completed_ids) <=2:
+            await message.channel.send("You dont have any tasks to clear 🙃")
+        else:
+            await message.channel.send("OK all your tasks are cleared 🙂")
 
 #***********************************************************************************************************************
 
@@ -218,6 +283,21 @@ async def on_message(message):
                     if is_match:
                         edited_entry = (new_task, time)
                         toDos[task_ID] = edited_entry  # new entry is entered as a tuple
+        # reminder addition: -------------------------------------------------------------------------------------------    
+                        user_time = process_input_time(time)
+
+                        military_time = time_to_military(user_time)
+                        time_hrs = military_time[0] + military_time[1]
+                        time_mins = military_time[3] + military_time[4]
+
+                        # scheduler.reschedule_job() does not allow the change of the message passed to the old job,
+                        # so I had to remove and then add the job with a new message
+                        scheduler.remove_job(str(task_ID))
+                        scheduler.add_job(func, CronTrigger(hour=time_hrs, minute=time_mins, second="0"),
+                                          (message, new_task, military_time,), id=str(task_ID))  # old
+        # --------------------------------------------------------------------------------------------------------------
+
+                      
                     else:
                         await message.channel.send('Your edit message is not formatted correctly.' +
                                                    '\nYou are probably missing an "at" before your task time.' +
