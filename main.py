@@ -29,10 +29,10 @@ def on_ready():
     print(client.user.name, ' has connected to Discord!')
 
 
-@client.event
-@asyncio.coroutine
-def on_member_join(member):
-    await member.channel.send('hi')
+#@client.event
+#@asyncio.coroutine
+#def on_member_join(member):
+    #await member.channel.send('hi')
 
 
 @client.event
