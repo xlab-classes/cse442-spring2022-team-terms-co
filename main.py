@@ -1,12 +1,9 @@
+from collections import defaultdict
 import keep_alive
 import os
 import random
 import re
 import discord
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from apscheduler.triggers.cron import CronTrigger
-from time_manager import process_input_time
-from time_manager import time_to_mili
 
 intents = discord.Intents.default()
 intents.members = True
@@ -16,6 +13,9 @@ client = discord.Client(intents=discord.Intents.all())
 TOKEN = os.environ['TOKEN']
 toDos = {0: 0, -1: ''}
 completed = {}
+
+#Nested Dictionary that keeps track of usernames first
+user_dict = {}
 #toDos =  { taskID: (task_details, tim_e) }
 #completed =  { taskID: (task_details, tim_e) }
 
@@ -57,7 +57,7 @@ def delete(id):
 
 @client.event
 async def on_ready():
-    print(client.user.name, ' has connected to Discord!')
+    print(f'{client.user.name} has connected to Discord!')
 
 @client.event
 async def on_member_join(member):
@@ -108,6 +108,17 @@ async def on_message(message):
         scheduler.print_jobs()
           
      # ----------------------------------------------------------------------------------------------------------    
+        #Mike's addition to add
+        #Should function independently of other code
+        print(message.author.name)
+        if message.author.id not in user_dict:
+            user_dict[int(message.author.id)] = [(taskID, message.content[13:split_index].strip(), tim_e)]
+        else:
+            user_dict[int(message.author.id)] += [(taskID, message.content[13:split_index].strip(), tim_e)]
+        print("User specific dict: " , user_dict)
+
+        print(toDos)
+        await message.channel.send(replies[random.randrange(len(replies))] + ". The task ID is " + str(taskID))
         return
       else:
         split_index = message.content.find(' to')
@@ -151,6 +162,9 @@ async def on_message(message):
         elif int(to_del) in completed:
             completed.pop(int(to_del.strip()))
             await message.channel.send("You have successfully deleted a task!")
+        elif int(to_del) in completed:
+            completed.pop(int(to_del.strip()))
+            await message.channel.send("You have successfully deleted a task!")
         else:
             await message.channel.send("No such task exists")
             return
@@ -183,6 +197,19 @@ async def on_message(message):
         print(completed)
         delete(str(message_id))
         await message.channel.send(m)
+   
+    elif message.content.startswith('userview'):
+        user_send =""
+        author = message.author.id
+        if author in user_dict:
+            for item in user_dict[author]:
+                user_send+="ID: " + str(item[0])+ " Task: " + item[1] +" Time: " + str(item[2]) + " author id: " + str(author)+  "\n"
+            await message.channel.send(user_send)
+        else:
+            await message.channel.send("You have no stored tasks")
+
+
+
 #***********************************************************************************************************************
 
 # Elijah's code:********************************************************************************************************
@@ -230,8 +257,7 @@ async def on_message(message):
         ids = list(toDos)
         completed_ids = list(completed)
         for i in ids[2:]:
-            toDos.pop(i)
-            delete(str(i))
+            toDos.pop(i)  
         for i in completed_ids:
             completed.pop(i)  
         if len(ids+completed_ids) <=2:
@@ -239,7 +265,9 @@ async def on_message(message):
         else:
             await message.channel.send("OK all your tasks are cleared 🙂")
 
-#***********************************************************************************************************************
+    
+
+
 
 # Rami's code:-----------------------------------------------------------------------------------------------
     # task: edit
@@ -283,21 +311,6 @@ async def on_message(message):
                     if is_match:
                         edited_entry = (new_task, time)
                         toDos[task_ID] = edited_entry  # new entry is entered as a tuple
-        # reminder addition: -------------------------------------------------------------------------------------------    
-                        user_time = process_input_time(time)
-
-                        military_time = time_to_military(user_time)
-                        time_hrs = military_time[0] + military_time[1]
-                        time_mins = military_time[3] + military_time[4]
-
-                        # scheduler.reschedule_job() does not allow the change of the message passed to the old job,
-                        # so I had to remove and then add the job with a new message
-                        scheduler.remove_job(str(task_ID))
-                        scheduler.add_job(func, CronTrigger(hour=time_hrs, minute=time_mins, second="0"),
-                                          (message, new_task, military_time,), id=str(task_ID))  # old
-        # --------------------------------------------------------------------------------------------------------------
-
-                      
                     else:
                         await message.channel.send('Your edit message is not formatted correctly.' +
                                                    '\nYou are probably missing an "at" before your task time.' +
