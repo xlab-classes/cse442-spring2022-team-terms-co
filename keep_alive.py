@@ -5,7 +5,7 @@ from flask import render_template
 app = Flask(__name__, static_url_path='/static')
 
 
-@app.route('/index', methods=['GET'])
+@app.route('/', methods=['GET'])
 def main():
     return render_template("index.html")
 
@@ -15,4 +15,4 @@ def keep_alive():
     server.start()
 
 if __name__ == '__main__':
-   app.run(host='0.0.0.0', port=5000)
+   app.run(host='0.0.0.0', port=8889)
