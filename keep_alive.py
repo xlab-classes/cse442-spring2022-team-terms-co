@@ -2,7 +2,7 @@ from flask import Flask
 from threading import Thread
 from flask import render_template
 
-app = Flask(__name__, static_url_path='/static')
+app = Flask(__name__, static_url_path='./static')
 
 
 @app.route('/', methods=['GET'])
