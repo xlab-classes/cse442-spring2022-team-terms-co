@@ -1,5 +1,6 @@
 from flask import Flask
 from threading import Thread
+from flask import render_template
 
 app = Flask(__name__, static_url_path='/static')
 
@@ -15,3 +16,6 @@ def run():
 def keep_alive():
     server = Thread(target=run)
     server.start()
+
+if __name__ == '__main__':
+   app.run()
