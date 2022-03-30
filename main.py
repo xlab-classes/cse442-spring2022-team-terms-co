@@ -3,6 +3,11 @@ import keep_alive
 import os
 import random
 import re
+import asyncio
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from apscheduler.triggers.cron import CronTrigger
+from time_manager import process_input_time
+from time_manager import time_to_military
 import discord
 
 intents = discord.Intents.default()
@@ -12,7 +17,7 @@ client = discord.Client(intents=discord.Intents.all())
 #Read the private key from a local file
 TOKEN = os.environ['TOKEN']
 toDos = {0: 0, -1: ''}
-completed = defaultdict(list)
+completed = {}
 
 #Nested Dictionary that keeps track of usernames first
 user_dict = {}
@@ -23,6 +28,37 @@ replies = [
     "Great ", "Awesome ", "Good going! ", " Attayou! ", "What a champ! ",
     "Rest assured! ", "Noted! "
 ]
+# AsyncIOScheduler() is to be used to send the user messages in real-time:
+scheduler = AsyncIOScheduler()          # initialize the scheduler
+scheduler.start()                       # start the schedule
+
+async def func(msg, task_details, task_time):
+    """
+    A function to be added to the scheduler when a job is added. This function sends an embed messagem notifying the
+    user of the task they scheduled.
+    """
+    await client.wait_until_ready()
+    await send_embed_message(msg, task_details, task_time)
+
+async def send_embed_message(msg, task_details, task_time):
+    """
+        A function to generate an embed message template containing the details of a task previously scheduled
+        by the user
+    """
+    embed = discord.Embed(
+        title="Event Details",
+        description="Task Description: " + task_details + "\n"
+                    + "\n"
+                   + ":clock1: " + task_time + "\n",
+        color=0xEABBC2)#0x6A5ACD
+    #await c.send(embed=embed)
+    await msg.channel.send(embed=embed)
+
+#create a func to delete message
+#call it in delete and clear all
+def delete(id):
+    scheduler.remove_job(id)
+    scheduler.print_jobs()
 
 @client.event
 async def on_ready():
@@ -36,6 +72,7 @@ async def on_member_join(member):
 async def on_message(message):
     if message.author == client.user:
         return
+  
 # Snigdha's code:********************************************************************************************************
     #add task
     regexCheck = re.match(".*(?![remind me to]).+", message.content)
@@ -43,9 +80,9 @@ async def on_message(message):
     if bool(regexCheck) and remindMeCheck:
       if ' at' in message.content:
         split_index = message.content.find(' at')
-        print(split_index)
+        #print(split_index)
         tim_e = message.content[split_index + 3:].replace(' ','')
-        print(tim_e)
+        #print(tim_e)
         #.*([0-9]\s?[AM|am|PM|pm]+)
         # time format to handle 5 : 15am
         matched = re.match(".*([0-9]\s?[AM|am|PM|pm]+)", tim_e)
@@ -59,10 +96,23 @@ async def on_message(message):
         taskID = toDos[0] + 1
         toDos[0] = taskID
         toDos[-1] = message.content[12:split_index]
-        print(toDos)
-        print(taskID, " task ID")
+        #print(toDos)
+        #print(taskID, " task ID")
         toDos[taskID] = (message.content[13:split_index].strip(), tim_e)
-        
+        print(toDos)
+        await message.channel.send(replies[random.randrange(len(replies))] + ". The task ID is " + str(taskID))
+    # Rami's Addition:------------------------------------------------------------------------------------------
+        print('channel: ' + str(message.channel))
+        user_time = process_input_time(tim_e)
+
+        military_time = time_to_military(user_time)
+        time_hrs = military_time[0] + military_time[1]
+        time_mins = military_time[3] + military_time[4]
+        task_details = toDos[taskID][0]
+        scheduler.add_job(func, CronTrigger(hour=time_hrs, minute=time_mins, second="0"),(message, task_details, military_time,), id=str(taskID)) # old
+        scheduler.print_jobs()
+          
+     # ----------------------------------------------------------------------------------------------------------    
         #Mike's addition to add
         #Should function independently of other code
         print(message.author.name)
@@ -71,6 +121,7 @@ async def on_message(message):
         else:
             user_dict[int(message.author.id)] += [(taskID, message.content[13:split_index].strip(), tim_e)]
         print("User specific dict: " , user_dict)
+        #--------------------------------------------------------------------------------------------------------
 
         print(toDos)
         await message.channel.send(replies[random.randrange(len(replies))] + ". The task ID is " + str(taskID))
@@ -106,12 +157,29 @@ async def on_message(message):
         to_del = message.content[split_index:]
         #the task ID to delete is to_del
         print(to_del)
+        #Mikes addition to delete------------------------------------
+        #This code is inneficient and bad but it will correctly delete an item
+        if to_del.isdigit():
+            new_list = []
+            for list_item in user_dict[int(message.author.id)]:
+                print("List item: " , list_item)
+                if list_item[0] != int(to_del.strip()):
+                    new_list+= [list_item]
+            user_dict[int(message.author.id)] = new_list
+        print("User specific dict after deletion: " , user_dict)
+
+
+        #-------------------------------------------------------
         if not to_del.isdigit():
             await message.channel.send(
                 "Invalid format. Send a message 'help' for assistance with valid formats."
             )
         elif int(to_del) in toDos:
             toDos.pop(int(to_del.strip()))
+            delete(to_del)
+            await message.channel.send("You have successfully deleted a task!")
+        elif int(to_del) in completed:
+            completed.pop(int(to_del.strip()))
             await message.channel.send("You have successfully deleted a task!")
         elif int(to_del) in completed:
             completed.pop(int(to_del.strip()))
@@ -119,6 +187,8 @@ async def on_message(message):
         else:
             await message.channel.send("No such task exists")
             return
+
+    
         print(toDos)
 #***********************************************************************************************************************
 
@@ -146,15 +216,22 @@ async def on_message(message):
         completed_task = toDos.pop(message_id)
         completed[message_id] = completed_task
         print(completed)
+        delete(str(message_id))
         await message.channel.send(m)
    
     elif message.content.startswith('userview'):
         user_send =""
         author = message.author.id
         if author in user_dict:
+
             for item in user_dict[author]:
                 user_send+="ID: " + str(item[0])+ " Task: " + item[1] +" Time: " + str(item[2]) + " author id: " + str(author)+  "\n"
-            await message.channel.send(user_send)
+            if len(user_send) > 0:
+                await message.channel.send(user_send)
+            else:
+                await message.channel.send("You have no stored tasks")
+
+
         else:
             await message.channel.send("You have no stored tasks")
 
@@ -217,7 +294,7 @@ async def on_message(message):
 
     
 
-#***********************************************************************************************************************
+
 
 # Rami's code:-----------------------------------------------------------------------------------------------
     # task: edit
