@@ -5,9 +5,9 @@ from flask import render_template
 app = Flask(__name__, static_url_path='/static')
 
 
-@app.route('/', methods=['GET'])
+@app.route('/index', methods=['GET'])
 def main():
-    return render_template("/index.html")
+    return render_template("index.html")
 
 
 def keep_alive():
