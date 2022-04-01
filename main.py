@@ -157,6 +157,27 @@ async def on_message(message):
         to_del = message.content[split_index:]
         #the task ID to delete is to_del
         print(to_del)
+        #Mikes User Specific addition to delete $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+        if not to_del.isdigit():
+            await message.channel.send(
+                "Invalid format. Send a message 'help' for assistance with valid formats."
+            )
+        elif message.author.id not in user_dict:
+            await message.channel.send("You can't delete a task because you have not added any")
+        elif int(to_del) not in user_dict[message.author.id]:
+            await message.channel.send("A message with that id does not exist")
+        elif int(to_del) in user_dict[message.author.id]:
+            user_dict[message.author.id].pop(int(to_del))
+            await message.channel.send("Successfully deleted!")
+        else:
+            #This should never run
+            await message.channel.send("Invalid deletion")
+
+
+
+
+        #$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
         if not to_del.isdigit():
             await message.channel.send(
                 "Invalid format. Send a message 'help' for assistance with valid formats."
@@ -170,6 +191,7 @@ async def on_message(message):
             await message.channel.send("You have successfully deleted a task!")
         else:
             await message.channel.send("No such task exists")
+       
             return
         print(toDos)
 #***********************************************************************************************************************
@@ -208,10 +230,13 @@ async def on_message(message):
     elif message.content.startswith('userview'):
         if message.author.id in user_dict:
             user_str = ""
-            for item in user_dict[message.author.id]:
-                print(item)
-                user_str += "Task "  + str(item)  + ": " + str(user_dict[message.author.id][item][0]) +  "Author id: "+ str(message.author.id) +"\n"
-            await message.channel.send(user_str)
+            if len(user_dict[message.author.id]) > 0:
+                for item in user_dict[message.author.id]:
+                    print(item)
+                    user_str += "Task "  + str(item)  + ": " + str(user_dict[message.author.id][item][0]) +  "Author id: "+ str(message.author.id) +"\n"
+                await message.channel.send(user_str)
+            else:
+                 await message.channel.send("You have no stored tasks")
         else:
             await message.channel.send("You have no stored tasks")
     #$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
