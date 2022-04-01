@@ -204,6 +204,17 @@ async def on_message(message):
 
 # Elijah's code:********************************************************************************************************
     #view task:
+    #Mikes addition of userview $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+    elif message.content.startswith('userview'):
+        if message.author.id in user_dict:
+            user_str = ""
+            for item in user_dict[message.author.id]:
+                print(item)
+                user_str += "Task "  + str(item)  + ": " + str(user_dict[message.author.id][item][0]) +  "Author id: "+ str(message.author.id) +"\n"
+            await message.channel.send(user_str)
+        else:
+            await message.channel.send("You have no stored tasks")
+    #$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
     elif message.content.startswith('view'):
         sent =''
         ids = (list(toDos))
