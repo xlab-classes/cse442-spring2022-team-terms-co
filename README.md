@@ -7,7 +7,7 @@ will associate a task_ID with that task. You can retrieve the task_ID of the tas
 your tasks, like deleting or editing them. 
 
 # **Using the Bot**
-[in progres....]
+You can invite TaskBot ...[in progres....]. You can try greeting TaskBot by typing *Hey*, *Hi*, or *Hello* and it will reply back and *sometimes* offer you some of the keywords to use its functionality! 
 
 # **Getting Help**
 To simplify using the bot for new users, we have included some commands that the user can enter to helpo them see the functionalities that the bot support.
