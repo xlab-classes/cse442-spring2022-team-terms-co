@@ -7,7 +7,6 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
 from time_manager import process_input_time
 from time_manager import time_to_military
- 
 
 intents = discord.Intents.default()
 intents.members = True
@@ -17,6 +16,8 @@ client = discord.Client(intents=discord.Intents.all())
 TOKEN = ''
 toDos = {0: 0, -1: ''}
 completed = {}
+
+user_dict = {}
 #toDos =  { taskID: (task_details, tim_e) }
 #completed =  { taskID: (task_details, tim_e) }
 
@@ -24,10 +25,37 @@ replies = [
     "Great ", "Awesome ", "Good going! ", " Attayou! ", "What a champ! ",
     "Rest assured! ", "Noted! "
 ]
-response_messages = {-1:1,1:['Make sure to ', "Hey, don't forget to ", "It's time to ", "I'd like to remind you to ", "I hope you haven't forgotten to ", "May I remind you to ", "Friendly reminder to "],#normal
-                     2:['You got this! Time to '],#motivational
-                     3:["Yoooo you gotta ", 'ight time to ', "Bro don't forget to ", 'yeeerrrooo' ]#casual
-                    }
+# AsyncIOScheduler() is to be used to send the user messages in real-time:
+scheduler = AsyncIOScheduler()          # initialize the scheduler
+scheduler.start()                       # start the schedule
+
+async def func(msg, task_details, task_time):
+    """
+    A function to be added to the scheduler when a job is added. This function sends an embed messagem notifying the
+    user of the task they scheduled.
+    """
+    await client.wait_until_ready()
+    await send_embed_message(msg, task_details, task_time)
+
+async def send_embed_message(msg, task_details, task_time):
+    """
+        A function to generate an embed message template containing the details of a task previously scheduled
+        by the user
+    """
+    embed = discord.Embed(
+        title="Event Details",
+        description="Task Description: " + task_details + "\n"
+                    + "\n"
+                   + ":clock1: " + task_time + "\n",
+        color=0xEABBC2)#0x6A5ACD
+    #await c.send(embed=embed)
+    await msg.channel.send(embed=embed)
+
+#create a func to delete message
+#call it in delete and clear all
+def delete(id):
+    scheduler.remove_job(id)
+    scheduler.print_jobs()
 
 
 def change_mood(emoji):
@@ -84,7 +112,7 @@ def delete(id):
  
 @client.event
 async def on_ready():
-    print(f'{client.user.name} has connected to Discord!')
+    print(client.user.name, ' has connected to Discord!')
 
 @client.event
 async def on_member_join(member):
@@ -94,9 +122,8 @@ async def on_member_join(member):
 async def on_message(message):
     if message.author == client.user:
         return
-  
 # Snigdha's code:********************************************************************************************************
-    #add task
+#add task
     regexCheck = re.match(".*(?![remind me to]).+", message.content)
     remindMeCheck = re.match("(.*(?=[R-r]emind me to).*)", message.content)
     if bool(regexCheck) and remindMeCheck:
@@ -135,6 +162,38 @@ async def on_message(message):
         scheduler.print_jobs()
           
      # ----------------------------------------------------------------------------------------------------------    
+        #Mike's addition to add
+        #Should function independently of other code
+        print(message.author.name)
+        #Mikes Addition ---------------------------------------------------------------------------------
+        
+        if message.author.id not in user_dict:
+            user_dict[message.author.id] = {}
+            user_dict[message.author.id][taskID]  = (message.content[13:split_index].strip(), tim_e)
+            print("Create user dict: " , user_dict)
+        else:
+            user_dict[message.author.id][taskID] = (message.content[13:split_index].strip(), tim_e)
+            print("Added to user dict: " , user_dict)
+
+
+
+
+        #---------------------------------------------------------------------------------------------
+        await message.channel.send(replies[random.randrange(len(replies))] + ". The task ID is " + str(taskID))
+        
+    # Rami's Addition:------------------------------------------------------------------------------------------
+        print('channel: ' + str(message.channel))
+        user_time = process_input_time(tim_e)
+
+        military_time = time_to_military(user_time)
+        time_hrs = military_time[0] + military_time[1]
+        time_mins = military_time[3] + military_time[4]
+        task_details = toDos[taskID][0]
+        scheduler.add_job(func, CronTrigger(hour=time_hrs, minute=time_mins, second="0"),
+                              (message, task_details, military_time,), id=str(taskID)) # old
+        scheduler.print_jobs()
+          
+     # ----------------------------------------------------------------------------------------------------------    
         return
       else:
         split_index = message.content.find(' to')
@@ -167,6 +226,27 @@ async def on_message(message):
         to_del = message.content[split_index:]
         #the task ID to delete is to_del
         print(to_del)
+        #Mikes User Specific addition to delete $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+        if not to_del.isdigit():
+            await message.channel.send(
+                "Invalid format. Send a message 'help' for assistance with valid formats."
+            )
+        elif message.author.id not in user_dict:
+            await message.channel.send("You can't delete a task because you have not added any")
+        elif int(to_del) not in user_dict[message.author.id]:
+            await message.channel.send("A message with that id does not exist")
+        elif int(to_del) in user_dict[message.author.id]:
+            user_dict[message.author.id].pop(int(to_del))
+            await message.channel.send("Successfully deleted!")
+        else:
+            #This should never run
+            await message.channel.send("Invalid deletion")
+
+
+
+
+        #$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
         if not to_del.isdigit():
             await message.channel.send(
                 "Invalid format. Send a message 'help' for assistance with valid formats."
@@ -178,15 +258,19 @@ async def on_message(message):
         elif int(to_del) in completed:
             completed.pop(int(to_del.strip()))
             await message.channel.send("You have successfully deleted a task!")
+        elif int(to_del) in completed:
+            completed.pop(int(to_del.strip()))
+            await message.channel.send("You have successfully deleted a task!")
         else:
             await message.channel.send("No such task exists")
+       
             return
         print(toDos)
 #***********************************************************************************************************************
 
 # Mike's code:**********************************************************************************************************
     #completed task:
-    elif 'completed' in message.content:
+    elif message.content.startswith('completed '):
       message_id = -1
       id_idx = message.content.find(' task')
 
@@ -214,6 +298,20 @@ async def on_message(message):
 
 # Elijah's code:********************************************************************************************************
     #view task:
+    #Mikes addition of userview $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+    elif message.content.startswith('userview'):
+        if message.author.id in user_dict:
+            user_str = ""
+            if len(user_dict[message.author.id]) > 0:
+                for item in user_dict[message.author.id]:
+                    print(item)
+                    user_str += "Task "  + str(item)  + ": " + str(user_dict[message.author.id][item][0]) +  "Author id: "+ str(message.author.id) +"\n"
+                await message.channel.send(user_str)
+            else:
+                 await message.channel.send("You have no stored tasks")
+        else:
+            await message.channel.send("You have no stored tasks")
+    #$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
     elif message.content.startswith('view'):
         sent =''
         ids = (list(toDos))
