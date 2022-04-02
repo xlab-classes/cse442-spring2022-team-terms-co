@@ -1,16 +1,16 @@
 from flask import Flask
 from threading import Thread
+from flask import render_template
 
-app = Flask('')
+app = Flask(__name__, static_url_path='/static')
 
 
-@app.route('/')
+@app.route('/', methods=['GET'])
 def main():
-    return "Your bot is alive!"
-
+    return render_template("index.html")
 
 def run():
-    app.run(host="0.0.0.0", port=8888)
+   app.run(host='0.0.0.0', port=8089, debug=True)
 
 
 def keep_alive():
