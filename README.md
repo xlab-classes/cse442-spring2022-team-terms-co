@@ -12,13 +12,13 @@ your tasks, like deleting or editing them.
 # **Getting Help**
 To simplify using the bot for new users, we have included some commands that the user can enter to helpo them see the functionalities that the bot support.
 
-**Help**<br>
++**Help**<br>
 Whenever you are stuck using TaskBot, you can ask for some help by typing *help*.
 
-**Tips**<br>
++**Tips**<br>
 You can ask for some tips of how to use TaskBot by typing "tips".
 
-**Examples**<br>
++**Examples**<br>
 You can see examples of how to use the commands supported by TaskBot by typing *examples*.
 
 # **Features**
