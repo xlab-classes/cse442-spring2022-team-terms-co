@@ -6,14 +6,15 @@ import discord
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
 from time_manager import process_input_time
-from time_manager import time_to_mili
+from time_manager import time_to_military
+ 
 
 intents = discord.Intents.default()
 intents.members = True
 client = discord.Client(intents=discord.Intents.all())
 
 #Read the private key from a local file
-TOKEN = os.environ['TOKEN']
+TOKEN = 'OTQ1ODc3NjkyNjczMzE4OTYz.YhWjPw.q-poY09uu8Xd2SeIFghPdn4m0vc'
 toDos = {0: 0, -1: ''}
 completed = {}
 #toDos =  { taskID: (task_details, tim_e) }
@@ -23,28 +24,53 @@ replies = [
     "Great ", "Awesome ", "Good going! ", " Attayou! ", "What a champ! ",
     "Rest assured! ", "Noted! "
 ]
+response_messages = {-1:1,1:['Make sure to ', "Hey, don't forget to ", "It's time to ", "I'd like to remind you to ", "I hope you haven't forgotten to ", "May I remind you to ", "Friendly reminder to "],#normal
+                     2:['You got this! Time to '],#motivational
+                     3:["Yoooo you gotta ", 'ight time to ', "Bro don't forget to ", 'yeeerrrooo' ]#casual
+                    }
+
+
+def change_mood(emoji):
+    if   emoji == '🙂':
+        response_messages[-1] = 1
+    elif emoji == '💪':
+        response_messages[-1] = 2
+    elif emoji == '😎':
+        response_messages[-1] = 3
+
 # AsyncIOScheduler() is to be used to send the user messages in real-time:
 scheduler = AsyncIOScheduler()          # initialize the scheduler
 scheduler.start()                       # start the schedule
 
 async def func(msg, task_details, task_time):
     """
-    A function to be added to the scheduler when a job is added. This function sends an embed messagem notifying the
+    A function to be added to the scheduler when a job is added. This function sends an embed message notifying the
     user of the task they scheduled.
     """
     await client.wait_until_ready()
     await send_embed_message(msg, task_details, task_time)
 
 async def send_embed_message(msg, task_details, task_time):
+    x = response_messages[-1]
+    y = random.randrange(0,len(response_messages[x]))
+    emoji = ''
+    if x == 1:
+        emoji = ' 🙂'       
+    elif x == 2:
+        emoji = ' 💪'
+        
+    elif x == 3:
+        emoji = ' 😎'
+
     """
         A function to generate an embed message template containing the details of a task previously scheduled
         by the user
     """
     embed = discord.Embed(
-        title="Event Details",
-        description="Task Description: " + task_details + "\n"
-                    + "\n"
-                   + ":clock1: " + task_time + "\n",
+        title = response_messages[x][y] + task_details + emoji,
+        # description="It's" +task_time+ ' '+response_messages[y] + task_details + "\n"
+        #             + "\n"
+        #            + ":clock1: " + task_time + "\n",
         color=0xEABBC2)#0x6A5ACD
     #await c.send(embed=embed)
     await msg.channel.send(embed=embed)
@@ -55,9 +81,10 @@ def delete(id):
     scheduler.remove_job(id)
     scheduler.print_jobs()
 
+ 
 @client.event
 async def on_ready():
-    print(client.user.name, ' has connected to Discord!')
+    print(f'{client.user.name} has connected to Discord!')
 
 @client.event
 async def on_member_join(member):
@@ -240,6 +267,27 @@ async def on_message(message):
             await message.channel.send("OK all your tasks are cleared 🙂")
 
 #***********************************************************************************************************************
+    elif message.content.startswith('change mood'):
+        if   '🙂' in message.content:            
+            await message.channel.send("mood changed to normal")
+            change_mood('🙂')
+            print(response_messages[-1])            
+        elif '😎' in message.content:                    
+            await message.channel.send("mood changed to casual")
+            change_mood('😎')
+            print(response_messages[-1])            
+        elif '💪' in message.content:
+            await message.channel.send("mood changed to motivtional")
+            change_mood('💪')
+            print(response_messages[-1])
+        else:
+            embed = discord.Embed(
+            title ='mood not currently available try one thats below⬇️⬇️',
+            description = "\n🙂 for neutral\n"+
+                          '\n💪 for motivational\n'+
+                          '\n😎 for casual\n',
+                color =0x22DB22)
+            await message.channel.send(embed=embed)        
 
 # Rami's code:-----------------------------------------------------------------------------------------------
     # task: edit
