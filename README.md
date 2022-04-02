@@ -1,5 +1,3 @@
-Author: Tanvie Kirane
-
 **To Do Bot:**
 
 This bot allows our users to have a friend that helps them organize their tasks. The bot has a natural lanuage API where we allow our users to:
