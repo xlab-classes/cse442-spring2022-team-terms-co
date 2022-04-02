@@ -1,15 +1,15 @@
 # cse442-spring2022-team-terms-co
 cse442-spring2022-team-terms-co created by GitHub Classroom
 
-**About**
+# **About**
 TaskBot is a Discord bot that can be used to schedule daily tasks. TaskBot offers many functionalities to help in tasks scheduling. Whenever you schedule a task, TaskBot
 will associate a task_ID with that task. You can retrieve the task_ID of the tasks you scheduled by typing *view*. Knowing the task_ID will help you do many things with 
 your tasks, like deleting or editing them. 
 
-**Using the Bot**
+# **Using the Bot**
 [in progres....]
 
-**Getting Help**
+# **Getting Help**
 To simplify using the bot for new users, we have included some commands that the user can enter to helpo them see the functionalities that the bot support.
 
 **Help**
@@ -21,7 +21,7 @@ You can ask for some tips of how to use TaskBot by typing "tips".
 **Examples**
 You can see examples of how to use the commands supported by TaskBot by typing *examples*.
 
-**Features**
+# **Features**
 **Adding a Task**
 To add a task to your schedule, simply type *remind me to* task_descritption *at* desired_time.
 
