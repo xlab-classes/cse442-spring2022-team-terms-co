@@ -14,7 +14,7 @@ intents.members = True
 client = discord.Client(intents=discord.Intents.all())
 
 #Read the private key from a local file
-TOKEN = 'OTQ1ODc3NjkyNjczMzE4OTYz.YhWjPw.q-poY09uu8Xd2SeIFghPdn4m0vc'
+TOKEN = ''
 toDos = {0: 0, -1: ''}
 completed = {}
 #toDos =  { taskID: (task_details, tim_e) }
