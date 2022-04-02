@@ -39,3 +39,5 @@ To mark a task as *important*, simply type *mark task* task_ID *as important*. I
 
 + **Marking a Task as Completed**<br>
 To mark a task as *completed*, simply tipe *completed task* task_ID.
+
+# **TaskBot Mood**
