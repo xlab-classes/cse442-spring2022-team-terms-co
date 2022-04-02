@@ -32,7 +32,7 @@ To edit an already scheduled task, simply type *Edit task* task_ID *:* new_task_
 To delete a scheduled task, simply type *delete* task_ID.
 
 + **Viewing Scheduled Tasks**<br>
-To view the tasks you have already scheduled, simply type *view*.
+To view the tasks you have already scheduled, simply type *view*. You can view only those tasks you marked as important by typing *view important tasks*.
 
 + **Marking a Task as Important**<br>
 To mark a task as *important*, simply type *mark task* task_ID *as important*. If you wish to remove that tag, you can simply type *mark task* task_ID *as not important*. 
