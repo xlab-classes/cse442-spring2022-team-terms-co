@@ -1,3 +1,5 @@
+from distutils.command.config import config
+from unicodedata import name
 import keep_alive
 import os
 import random
@@ -13,7 +15,6 @@ intents.members = True
 client = discord.Client(intents=discord.Intents.all())
 
 #Read the private key from a local file
-TOKEN = ''
 toDos = {0: 0, -1: ''}
 completed = {}
 
@@ -480,4 +481,7 @@ async def on_message(message):
         )
 
 keep_alive.keep_alive()
-client.run(TOKEN)
+
+if __name__ == '__main__':
+    import config
+    client.run(config.token)
