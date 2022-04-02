@@ -158,7 +158,7 @@ async def on_message(message):
         time_hrs = military_time[0] + military_time[1]
         time_mins = military_time[3] + military_time[4]
         task_details = toDos[taskID][0]
-        scheduler.add_job(func, CronTrigger(hour=time_hrs, minute=time_mins, second="0"),(message, task_details, military_time,), id=str(taskID)) # old
+        scheduler.add_job(func, CronTrigger(hour=time_hrs, minute=time_mins, second="0"),(message, task_details, military_time,), id=str(taskID), replace_existing=True)
         scheduler.print_jobs()
           
      # ----------------------------------------------------------------------------------------------------------    
