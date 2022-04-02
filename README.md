@@ -22,20 +22,20 @@ You can ask for some tips of how to use TaskBot by typing "tips".
 You can see examples of how to use the commands supported by TaskBot by typing *examples*.
 
 # **Features**
-**Adding a Task**<br>
++ **Adding a Task**<br>
 To add a task to your schedule, simply type *remind me to* task_descritption *at* desired_time.
 
-**Editting a Task**<br>
++ **Editting a Task**<br>
 To edit an already scheduled task, simply type *Edit task* task_ID *:* new_task_details *at* new_task_time.
 
-**Deleting a Task**<br>
++ **Deleting a Task**<br>
 To delete a scheduled task, simply type *delete* task_ID.
 
-**Viewing Scheduled Tasks**<br>
++ **Viewing Scheduled Tasks**<br>
 To view the tasks you have already scheduled, simply type *view*.
 
-**Marking a Task as Important**<br>
++ **Marking a Task as Important**<br>
 To mark a task as *important*, simply type *mark task* task_ID *as important*. If you wish to remove that tag, you can simply type *mark task* task_ID *as not important*. 
 
-**Marking a Task as Completed**<br>
++ **Marking a Task as Completed**<br>
 To mark a task as *completed*, simply tipe *completed task* task_ID.
