@@ -12,10 +12,12 @@ You can invite TaskBot to your server by following the instructions on https://w
 # **Getting Help**
 To simplify using the bot for new users, we have included some commands that the user can enter to help them see the functionalities that the bot support.
 
-| Feature       | Command       | Description |
-| ------------- | ------------- | ----------- |             
-| Content Cell  | Content Cell  |             |
-| Content Cell  | Content Cell  |             |
+|    Feature    |    Command    |                           Description                              |
+| ------------- | ------------- | ------------------------------------------------------------------ |             
+| Help          |  *help*       | This command can be used whenever the user is stuck using TaskBot  |          
+| Tips          |  *tips*       | Allows the user to see some tips of how to use TaskBot             |            
+| Examples      |  *examples*   | Shows some examples of the commands supported by TaskBot           |       
+
 + **Help**<br>
 Whenever you are stuck using TaskBot, you can ask for some help by typing *help*.
 
