@@ -18,32 +18,17 @@ To simplify using the bot for new users, we have included some commands that the
 | Tips          |  *tips*       | Allows the user to see some tips of how to use TaskBot             |            
 | Examples      |  *examples*   | Shows some examples of the commands supported by TaskBot           |       
 
-+ **Help**<br>
-Whenever you are stuck using TaskBot, you can ask for some help by typing *help*.
-
-+ **Tips**<br>
-You can ask for some tips of how to use TaskBot by typing *tips*.
-
-+ **Examples**<br>
-You can see examples of how to use the commands supported by TaskBot by typing *examples*.
-
 # **Features**
-+ **Adding a Task**<br>
-To add a task to your schedule, simply type *remind me to* task_descritption *at* desired_time.
 
-+ **Editting a Task**<br>
-To edit an already scheduled task, simply type *Edit task* task_ID *:* new_task_details *at* new_task_time.
+|           Feature          |                        Command                            |         
+| -------------------------- | --------------------------------------------------------- |              
+| Adding a Task              |  *remind me to task_description at desired_time*          |      
+| Editing a Task             |  *edit task task_ID : new_task_details at new_task_time*  |              
+| Deleting a Task            |  *delete task_ID*                                         |     
+| Viewing Scheduled Task     |  *view*                                                   |
+| Marking Tasks as Important |  *mark task task_ID as important*                         |
+| Removing the Important Tag |  *mark task task_ID as not important*                     |
+| Marking Tasks as Completed |  *Completed task task_ID*                                 |
 
-+ **Deleting a Task**<br>
-To delete a scheduled task, simply type *delete* task_ID.
-
-+ **Viewing Scheduled Tasks**<br>
-To view the tasks you have already scheduled, simply type *view*. You can view only those tasks you marked as important by typing *view important tasks*.
-
-+ **Marking a Task as Important**<br>
-To mark a task as *important*, simply type *mark task* task_ID *as important*. If you wish to remove that tag, you can simply type *mark task* task_ID *as not important*. 
-
-+ **Marking a Task as Completed**<br>
-To mark a task as *completed*, simply tipe *completed task* task_ID.
 
 # **TaskBot Mood**
