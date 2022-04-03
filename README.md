@@ -32,3 +32,25 @@ To simplify using the bot for new users, we have included some commands that the
 
 
 # **TaskBot Mood**
+
+You can control the mood of message reminders sent by TaskBot. [In Progress...]
+
+# **A Walkthrought**
+Let's try using TaskBot to schedule our tasks. We will start by adding our first task by sending the bot the following message: *remind me to submit my homework at 
+11:00am*. The bot will reply with:
+![image](https://user-images.githubusercontent.com/43181965/161452607-29550cdb-6700-471b-b938-f8972e579344.png)
+Now, let us mark that task as important by typing *mark task 1 as important*. The bot's reply is:
+![image](https://user-images.githubusercontent.com/43181965/161452643-507438b5-3c62-471d-907f-4bf556b1f4fa.png)
+Upon typing *view*, we can see our schedule so far:
+![image](https://user-images.githubusercontent.com/43181965/161452660-c97bca8e-b178-40a2-bb4f-f6dccbbc8b7b.png)
+Suppose we want to edit the task we just scheduled and wish to change its time. We simply type: *edit task 1 : submit my homework at 11:59 am*. The bot will reply with:
+![image](https://user-images.githubusercontent.com/43181965/161452737-77efbf6b-8806-4302-8f44-afad4fb29b7a.png)
+The changes will be reflected on the schedule:
+![image](https://user-images.githubusercontent.com/43181965/161452758-a5367872-76df-4b9a-9751-08b533b7256f.png)
+Now, we can mark our task as completed by typinh *completed task 1*:
+![image](https://user-images.githubusercontent.com/43181965/161452804-fb1c555e-691b-41e1-adea-618b3092d764.png)
+Finally, we can delete the task we just completed and make sure that our schedule is totally empty:
+![image](https://user-images.githubusercontent.com/43181965/161452854-388715d1-b883-4990-8c9a-89582cb6b264.png)
+
+
+
