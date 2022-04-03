@@ -1,5 +1,4 @@
-# cse442-spring2022-team-terms-co
-cse442-spring2022-team-terms-co created by GitHub Classroom
+# CSE442 Project
 
 # **About**
 TaskBot is a Discord bot that can be used to schedule daily tasks. TaskBot offers many functionalities to help in tasks scheduling. Whenever you schedule a task, TaskBot
