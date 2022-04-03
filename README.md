@@ -11,13 +11,13 @@ your tasks, like deleting or editing them.
 You can invite TaskBot to your server by following the instructions on https://www-student.cse.buffalo.edu/CSE442-542/2022-Spring/cse-442s/cse442-spring2022-team-terms-co/static/. Once TaskBot has been invited, you can try greeting it by typing *Hey*, *Hi*, or *Hello* and it will reply back and *sometimes* offer you some of the keywords the will help you use its functionality! 
 
 # **Getting Help**
-To simplify using the bot for new users, we have included some commands that the user can enter to helpo them see the functionalities that the bot support.
+To simplify using the bot for new users, we have included some commands that the user can enter to help them see the functionalities that the bot support.
 
 + **Help**<br>
 Whenever you are stuck using TaskBot, you can ask for some help by typing *help*.
 
 + **Tips**<br>
-You can ask for some tips of how to use TaskBot by typing "tips".
+You can ask for some tips of how to use TaskBot by typing *tips*.
 
 + **Examples**<br>
 You can see examples of how to use the commands supported by TaskBot by typing *examples*.
