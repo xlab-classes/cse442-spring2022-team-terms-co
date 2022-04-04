@@ -36,7 +36,7 @@ To simplify using the bot for new users, we have included some commands that the
 You can control the mood of message reminders sent by TaskBot. [In Progress...]
 <img src="https://github.com/favicon.ico" width="48">
 
-# **A Walkthrought**
+# **A Walkthrough**
 Let's try using TaskBot to schedule our tasks. We will start by adding our first task by sending the bot the following message: *remind me to submit my homework at 
 11:00am*. The bot will reply with:
 <br/>
