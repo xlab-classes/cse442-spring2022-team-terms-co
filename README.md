@@ -47,7 +47,7 @@ Let's try using TaskBot to schedule our tasks. We will start by adding our first
 Now, let us mark that task as important by typing *mark task 1 as important*. The bot's reply is:
 <br/>
 <br/>
-<img src = "https://user-images.githubusercontent.com/43181965/161452643-507438b5-3c62-471d-907f-4bf556b1f4fa.png"  width="200" />
+<img src = "https://user-images.githubusercontent.com/43181965/161452643-507438b5-3c62-471d-907f-4bf556b1f4fa.png"  width="200" height="100"/>
 <br/>
 <br/>
 Upon typing *view*, we can see our schedule so far:
@@ -58,19 +58,19 @@ Upon typing *view*, we can see our schedule so far:
 <br/>
   
 Suppose we want to edit the task we just scheduled and wish to change its time. We simply type: *edit task 1 : submit my homework at 11:59 am*. The bot will reply with:
-<br/>
+<br/><br/>
 ![image](https://user-images.githubusercontent.com/43181965/161452737-77efbf6b-8806-4302-8f44-afad4fb29b7a.png)
-<br/>
+<br/><br/>
 The changes will be reflected on the schedule:
-<br/>
+<br/><br/>
 ![image](https://user-images.githubusercontent.com/43181965/161452758-a5367872-76df-4b9a-9751-08b533b7256f.png)
-<br/>
+<br/><br/>
 Now, we can mark our task as completed by typinh *completed task 1*:
-<br/>
+<br/><br/>
 ![image](https://user-images.githubusercontent.com/43181965/161452804-fb1c555e-691b-41e1-adea-618b3092d764.png)
-<br/>
+<br/><br/>
 Finally, we can delete the task we just completed and make sure that our schedule is totally empty:
-<br/>
+<br/><br/>
 ![image](https://user-images.githubusercontent.com/43181965/161452854-388715d1-b883-4990-8c9a-89582cb6b264.png)
 <br/>
 
