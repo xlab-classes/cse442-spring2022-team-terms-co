@@ -40,7 +40,7 @@ You can control the mood of message reminders sent by TaskBot. [In Progress...]
 Let's try using TaskBot to schedule our tasks. We will start by adding our first task by sending the bot the following message: *remind me to submit my homework at 
 11:00am*. The bot will reply with:
 
-<img stc = "https://user-images.githubusercontent.com/43181965/161452607-29550cdb-6700-471b-b938-f8972e579344.png" width = 50>
+<img stc = "https://user-images.githubusercontent.com/43181965/161452607-29550cdb-6700-471b-b938-f8972e579344.png" width = 10>
 
 Now, let us mark that task as important by typing *mark task 1 as important*. The bot's reply is:
 ![image](https://user-images.githubusercontent.com/43181965/161452643-507438b5-3c62-471d-907f-4bf556b1f4fa.png = 250x250)
