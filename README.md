@@ -40,16 +40,16 @@ You can control the mood of message reminders sent by TaskBot. [In Progress...]
 Let's try using TaskBot to schedule our tasks. We will start by adding our first task by sending the bot the following message: *remind me to submit my homework at 
 11:00am*. The bot will reply with:
 <br/>
-<img src = "https://user-images.githubusercontent.com/43181965/161452607-29550cdb-6700-471b-b938-f8972e579344.png" style="width:200px" "height:200px">
+<img src = "https://user-images.githubusercontent.com/43181965/161452607-29550cdb-6700-471b-b938-f8972e579344.png" style="width:200px">
 <br/>
-
+  
 Now, let us mark that task as important by typing *mark task 1 as important*. The bot's reply is:
 <br/>
-![image](https://user-images.githubusercontent.com/43181965/161452643-507438b5-3c62-471d-907f-4bf556b1f4fa.png)
-<br/>
+<img src = "https://user-images.githubusercontent.com/43181965/161452643-507438b5-3c62-471d-907f-4bf556b1f4fa.png" style="width:200px")
+<br/>  
 Upon typing *view*, we can see our schedule so far:
 <br/>
-![image](https://user-images.githubusercontent.com/43181965/161452660-c97bca8e-b178-40a2-bb4f-f6dccbbc8b7b.png)
+<img src = "https://user-images.githubusercontent.com/43181965/161452660-c97bca8e-b178-40a2-bb4f-f6dccbbc8b7b.png" style="width:200px")
 <br/>
 Suppose we want to edit the task we just scheduled and wish to change its time. We simply type: *edit task 1 : submit my homework at 11:59 am*. The bot will reply with:
 <br/>
