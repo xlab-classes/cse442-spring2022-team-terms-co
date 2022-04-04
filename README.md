@@ -65,7 +65,7 @@ The changes will be reflected on the schedule:
 <br/><br/>
 ![image](https://user-images.githubusercontent.com/43181965/161452758-a5367872-76df-4b9a-9751-08b533b7256f.png)
 <br/><br/>
-Now, we can mark our task as completed by typinh *completed task 1*:
+Now, we can mark our task as completed by typing *completed task 1*:
 <br/><br/>
 ![image](https://user-images.githubusercontent.com/43181965/161452804-fb1c555e-691b-41e1-adea-618b3092d764.png)
 <br/><br/>
