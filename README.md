@@ -41,19 +41,19 @@ Let's try using TaskBot to schedule our tasks. We will start by adding our first
 11:00am*. The bot will reply with:
 <br/>
 <br/>
-<img src = "https://user-images.githubusercontent.com/43181965/161452607-29550cdb-6700-471b-b938-f8972e579344.png" style="width:200px">
+<img src = "https://user-images.githubusercontent.com/43181965/161452607-29550cdb-6700-471b-b938-f8972e579344.png">
 <br/>
 <br/>  
 Now, let us mark that task as important by typing *mark task 1 as important*. The bot's reply is:
 <br/>
 <br/>
-<img src = "https://user-images.githubusercontent.com/43181965/161452643-507438b5-3c62-471d-907f-4bf556b1f4fa.png"  width="200" height="100"/>
+<img src = "https://user-images.githubusercontent.com/43181965/161452643-507438b5-3c62-471d-907f-4bf556b1f4fa.png">
 <br/>
 <br/>
 Upon typing *view*, we can see our schedule so far:
 <br/>
 <br/>
-<img src = "https://user-images.githubusercontent.com/43181965/161452660-c97bca8e-b178-40a2-bb4f-f6dccbbc8b7b.png" width="200" height="200")
+<img src = "https://user-images.githubusercontent.com/43181965/161452660-c97bca8e-b178-40a2-bb4f-f6dccbbc8b7b.png">
 <br/>
 <br/>
   
