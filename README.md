@@ -29,6 +29,7 @@ To simplify using the bot for new users, we have included some commands that the
 | Marking Tasks as Important |  *mark task task_ID as important*                         |
 | Removing the Important Tag |  *mark task task_ID as not important*                     |
 | Marking Tasks as Completed |  *Completed task task_ID*                                 |
+| List Only Important Tasks  |  *list important tasks*                                   |
 
 
 # **TaskBot Mood**
