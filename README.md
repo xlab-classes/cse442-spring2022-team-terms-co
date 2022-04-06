@@ -1,4 +1,5 @@
 # CSE442 Project
+### https://www-student.cse.buffalo.edu/CSE442-542/2022-Spring/cse-442s/cse442-spring2022-team-terms-co/static/
 
 # **About**
 TaskBot is a Discord bot that can be used to schedule daily tasks. TaskBot offers many functionalities to help in scheduling tasks. Whenever you schedule a task, TaskBot will associate a task_ID with that task. You can retrieve the task_ID of the tasks you scheduled by typing *view*. Knowing the task_ID will help you do many things with your tasks, like deleting or editing them. While using the commands may seem intmidating at first, it is easy to get used to them quickly. Moreover, TaskBot is designed to handle users messages sent in the worng format by notifying them of possible errors they made. We hope to make the lives of our users easier with the convenience of our very own toDoBot!
