@@ -1,5 +1,22 @@
 from datetime import datetime
-import pytz
+import re
+def is_time_format(time):
+    """
+    Accepted times could be of two cases:
+        case 1: --:--pm -> length = 7
+        case 2: -:--pm  -> length = 6
+    Edge cases to handle
+        - first digit of minutes should not exceed 5
+    the maximum length = 7 so 8 or longer should return false
+    """
+    print("is_time_format = " + time)
+    matched = re.match(".*([0-9]\s?[AM|am|PM|pm]+)", time)
+    print('length of time  = ' + str(len(time)))
+    if not matched: return False
+    elif len(time) > 7: return False
+    elif len(time) == 7 and int(time[3]) > 5: return False
+    elif len(time) == 6 and int(time[2]) > 5: return False
+    return True
 
 def process_input_time(input_time):
     """
@@ -63,16 +80,6 @@ def time_to_military(t):
     hours:minutes AM, or
     hours:minutes PM.
     """
-    # my_datetime = datetime(2023, 2, 13, 17, 10, 27, tzinfo = pytz.utc)
-
-    # military_time = datetime(t, '%I:%M %p').strftime('%H:%M')
-    # my_datetime_est = military_time.astimezone(pytz.timezone('US/Eastern')).strftime('%Y-%m-%d %H:%M:%S %Z%z')
-    # print(my_datetime_est)
-    # return my_datetime_est
-    # timezone = pytz.timezone('America/New_York')
-    # military_time = datetime.utcnow().astimezone(tz=timezone)
-    
     military_time = datetime.strptime(t, '%I:%M %p').strftime('%H:%M')
     print(military_time)
     return military_time
-
