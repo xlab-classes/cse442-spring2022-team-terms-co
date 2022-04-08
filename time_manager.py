@@ -3,7 +3,7 @@ import re
 def is_time_format(time):
     """
     Accepted times could be of two cases:
-        case 1: --:--pm -> length = 7..
+        case 1: --:--pm -> length = 7...
         case 2: -:--pm  -> length = 6
     Edge cases to handle
         - first digit of minutes should not exceed 5

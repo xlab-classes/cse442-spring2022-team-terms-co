@@ -1,7 +1,7 @@
 import random
 
 def help_command_message():
-    """ This function returns the bot message when the user makes a 'help' request.. """
+    """ This function returns the bot message when the user makes a 'help' request... """
 
     bot_help_msg = ("I support the following commands:\n" 
             "\n:one: " + "add a task by typing \"**remind me to \'task\' at \'time\'**\n" +
