@@ -1,5 +1,7 @@
-from distutils.command.config import config
-from unicodedata import name
+from sched import scheduler
+from winreg import QueryReflectionKey
+
+from pytz import timezone
 import keep_alive
 import os
 import random
@@ -9,16 +11,18 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
 from time_manager import process_input_time
 from time_manager import time_to_military
+import quotes
+ 
 
 intents = discord.Intents.default()
 intents.members = True
 client = discord.Client(intents=discord.Intents.all())
 
 #Read the private key from a local file
+TOKEN = 'OTQ1ODc3NjkyNjczMzE4OTYz.YhWjPw.Ze7bJVKShOhzpbNj20ReINg9Pso'
 toDos = {0: 0, -1: ''}
 completed = {}
-
-user_dict = {}
+pending_task = {}#tasks that time have passed but havent been completed
 #toDos =  { taskID: (task_details, tim_e) }
 #completed =  { taskID: (task_details, tim_e) }
 
@@ -26,51 +30,33 @@ replies = [
     "Great ", "Awesome ", "Good going! ", " Attayou! ", "What a champ! ",
     "Rest assured! ", "Noted! "
 ]
-# AsyncIOScheduler() is to be used to send the user messages in real-time:
-scheduler = AsyncIOScheduler()          # initialize the scheduler
-scheduler.start()                       # start the schedule
-
-async def func(msg, task_details, task_time):
-    """
-    A function to be added to the scheduler when a job is added. This function sends an embed messagem notifying the
-    user of the task they scheduled.
-    """
-    await client.wait_until_ready()
-    await send_embed_message(msg, task_details, task_time)
-
-async def send_embed_message(msg, task_details, task_time):
-    """
-        A function to generate an embed message template containing the details of a task previously scheduled
-        by the user
-    """
-    embed = discord.Embed(
-        title="Event Details",
-        description="Task Description: " + task_details + "\n"
-                    + "\n"
-                   + ":clock1: " + task_time + "\n",
-        color=0xEABBC2)#0x6A5ACD
-    #await c.send(embed=embed)
-    await msg.channel.send(embed=embed)
-
-#create a func to delete message
-#call it in delete and clear all
-def delete(id):
-    scheduler.remove_job(id)
-    scheduler.print_jobs()
-
+response_messages = {-1:1,
+                     1:quotes.normal,#normal
+                     2:quotes.motivate,#motivational
+                     3:quotes.casual#casual
+                    }
+quotes={-1:1,
+        1:quotes.cliche,
+        2:quotes.motivational,
+        3:quotes.funny,
+}
 
 def change_mood(emoji):
     if   emoji == '🙂':
         response_messages[-1] = 1
+        quotes[-1] = 1
     elif emoji == '💪':
         response_messages[-1] = 2
+        quotes[-1] = 2
     elif emoji == '😎':
         response_messages[-1] = 3
+        quotes[-1] = 3
 
 # AsyncIOScheduler() is to be used to send the user messages in real-time:
 scheduler = AsyncIOScheduler()          # initialize the scheduler
 scheduler.start()                       # start the schedule
-
+# scheduler = BackgroundScheduler()
+# scheduler.start()
 async def func(msg, task_details, task_time):
     """
     A function to be added to the scheduler when a job is added. This function sends an embed message notifying the
@@ -80,26 +66,25 @@ async def func(msg, task_details, task_time):
     await send_embed_message(msg, task_details, task_time)
 
 async def send_embed_message(msg, task_details, task_time):
-    x = response_messages[-1]
-    y = random.randrange(0,len(response_messages[x]))
+    tone = response_messages[-1]
+    random_message = random.randrange(0,len(response_messages[tone]))
+    quote_mood = quotes[-1]
+    random_quote = random.randrange(0,len(quotes[quote_mood]))
     emoji = ''
-    if x == 1:
-        emoji = ' 🙂'       
-    elif x == 2:
-        emoji = ' 💪'
-        
-    elif x == 3:
-        emoji = ' 😎'
+    if   tone == 1:
+        emoji = '  🙂'       
+    elif tone == 2:
+        emoji = '  💪'
+    elif tone == 3:
+        emoji = '  😎'
 
     """
         A function to generate an embed message template containing the details of a task previously scheduled
         by the user
     """
     embed = discord.Embed(
-        title = response_messages[x][y] + task_details + emoji,
-        # description="It's" +task_time+ ' '+response_messages[y] + task_details + "\n"
-        #             + "\n"
-        #            + ":clock1: " + task_time + "\n",
+        title = response_messages[tone][random_message] + task_details + emoji,
+        description= quotes[quote_mood][random_quote],
         color=0xEABBC2)#0x6A5ACD
     #await c.send(embed=embed)
     await msg.channel.send(embed=embed)
@@ -110,10 +95,18 @@ def delete(id):
     scheduler.remove_job(id)
     scheduler.print_jobs()
 
+# def pending(id):
+    
+#     taskID = id
+#     task=  toDos[taskID][0]
+
+#     completed_task = toDos.pop(taskID)
+#     pending_task[taskID] = completed_task
+#     print(pending)
  
 @client.event
 async def on_ready():
-    print(client.user.name, ' has connected to Discord!')
+    print(f'{client.user.name} has connected to Discord!')
 
 @client.event
 async def on_member_join(member):
@@ -123,8 +116,9 @@ async def on_member_join(member):
 async def on_message(message):
     if message.author == client.user:
         return
+  
 # Snigdha's code:********************************************************************************************************
-#add task
+    #add task
     regexCheck = re.match(".*(?![remind me to]).+", message.content)
     remindMeCheck = re.match("(.*(?=[R-r]emind me to).*)", message.content)
     if bool(regexCheck) and remindMeCheck:
@@ -139,10 +133,17 @@ async def on_message(message):
         #print(matched)
         is_match = bool(matched)
         if not is_match:
-            await message.channel.send(
-                "Invalid format. Send a message 'help' for assistance with valid formats."
+            embed = discord.Embed(
+                title ="Unable to add the task. To add a task send a message in the following format:",
+                description = 'remind me to do a task at time\n \n ex:\n remind me to cook dinner at 5:30pm',
+            color =0xeb34c9
             )
-            return
+            await message.channel.send(embed=embed)
+            return 
+            # await message.channel.send(
+            #     "Invalid format. Send a message 'help' for assistance with valid formats."
+            # )
+            # return
         taskID = toDos[0] + 1
         toDos[0] = taskID
         toDos[-1] = message.content[12:split_index]
@@ -163,26 +164,6 @@ async def on_message(message):
         scheduler.print_jobs()
           
      # ----------------------------------------------------------------------------------------------------------    
-        #Mike's addition to add
-        #Should function independently of other code
-        print(message.author.name)
-        #Mikes Addition ---------------------------------------------------------------------------------
-        
-        if message.author.id not in user_dict:
-            user_dict[message.author.id] = {}
-            user_dict[message.author.id][taskID]  = (message.content[13:split_index].strip(), tim_e)
-            print("Create user dict: " , user_dict)
-        else:
-            user_dict[message.author.id][taskID] = (message.content[13:split_index].strip(), tim_e)
-            print("Added to user dict: " , user_dict)
-
-
-
-
-        #---------------------------------------------------------------------------------------------
-        await message.channel.send(replies[random.randrange(len(replies))] + ". The task ID is " + str(taskID))
-        
-     
         return
       else:
         split_index = message.content.find(' to')
@@ -215,51 +196,35 @@ async def on_message(message):
         to_del = message.content[split_index:]
         #the task ID to delete is to_del
         print(to_del)
-        #Mikes User Specific addition to delete $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
         if not to_del.isdigit():
-            await message.channel.send(
-                "Invalid format. Send a message 'help' for assistance with valid formats."
+            embed = discord.Embed(
+                title ="Unable to delete the task. To delete a task send it in the format below:",
+                description = 'delete task_ID\n \n ex:\n delete 4',
+            color =0xeb34c9
             )
-        elif message.author.id not in user_dict:
-            await message.channel.send("You can't delete a task because you have not added any")
-        elif int(to_del) not in user_dict[message.author.id]:
-            await message.channel.send("A message with that id does not exist")
-        elif int(to_del) in user_dict[message.author.id]:
-            user_dict[message.author.id].pop(int(to_del))
-            await message.channel.send("Successfully deleted!")
-        else:
-            #This should never run
-            await message.channel.send("Invalid deletion")
-
-
-
-
-        #$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-
-        if not to_del.isdigit():
-            await message.channel.send(
-                "Invalid format. Send a message 'help' for assistance with valid formats."
-            )
+            await message.channel.send(embed=embed)
+            # await message.channel.send("Invalid format. Send a message 'help' for assistance with valid formats.")
         elif int(to_del) in toDos:
             toDos.pop(int(to_del.strip()))
             delete(to_del)
             await message.channel.send("You have successfully deleted a task!")
         elif int(to_del) in completed:
             completed.pop(int(to_del.strip()))
-            await message.channel.send("You have successfully deleted a task!")
-        elif int(to_del) in completed:
-            completed.pop(int(to_del.strip()))
-            await message.channel.send("You have successfully deleted a task!")
+            await message.channel.send("You have successfully deleted a completed task!")
         else:
-            await message.channel.send("No such task exists")
-       
+            embed = discord.Embed(
+                title ="Unable to delete the task. To delete a task send it in the format below:",
+                description = 'delete task_ID\n \n ex:\n delete 4',
+            color =0xeb34c9
+            )     
+            await message.channel.send(embed=embed)          
             return
         print(toDos)
 #***********************************************************************************************************************
 
 # Mike's code:**********************************************************************************************************
     #completed task:
-    elif message.content.startswith('completed '):
+    elif 'completed' in message.content:
       message_id = -1
       id_idx = message.content.find(' task')
 
@@ -275,7 +240,15 @@ async def on_message(message):
 
       #If the word task or the message id is not found then tell the user their input was incorrect
       if id_idx == -1 or message_id == -1:
-        await message.channel.send("You did not correctly list a task, please call help to see the correct formatting")
+        
+        embed = discord.Embed(
+            title ="Task id not found. To complete a task send it in the format below:",
+            description = "Completed task task_ID\n \n"+'ex:\n Completed task 4',
+        color =0x4e03fc
+        )
+        await message.channel.send(embed=embed) 
+        return         
+        # await message.channel.send("You did not correctly list a task, please call help to see the correct formatting")
       else:
         m = "Congrats on completing task: " + str(message_id)
         completed_task = toDos.pop(message_id)
@@ -287,20 +260,6 @@ async def on_message(message):
 
 # Elijah's code:********************************************************************************************************
     #view task:
-    #Mikes addition of userview $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-    elif message.content.startswith('userview'):
-        if message.author.id in user_dict:
-            user_str = ""
-            if len(user_dict[message.author.id]) > 0:
-                for item in user_dict[message.author.id]:
-                    print(item)
-                    user_str += "Task "  + str(item)  + ": " + str(user_dict[message.author.id][item][0]) +  "Author id: "+ str(message.author.id) +"\n"
-                await message.channel.send(user_str)
-            else:
-                 await message.channel.send("You have no stored tasks")
-        else:
-            await message.channel.send("You have no stored tasks")
-    #$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
     elif message.content.startswith('view'):
         sent =''
         ids = (list(toDos))
@@ -376,6 +335,28 @@ async def on_message(message):
                 color =0x22DB22)
             await message.channel.send(embed=embed)        
 
+    elif message.content.startswith('quote'):
+        quote =''
+        if   quotes[-1] == 1:    
+             random_quote = random.randrange(0,len(quotes[1]))
+             quote = quotes[1][random_quote]
+             quote_type = "Here's a cliche quote"
+
+        elif quotes[-1] ==2:
+             random_quote = random.randrange(0,len(quotes[2]))
+             quote = quotes[2][random_quote]
+             quote_type = "Here's a Motivational quote"
+
+        elif quotes[-1] ==3:
+             random_quote = random.randrange(0,len(quotes[3]))
+             quote = quotes[3][random_quote]
+             quote_type = "Here's a funny quote"
+        embed = discord.Embed(
+        title =quote_type,
+        description = quote,
+            color =0xBBA14F )
+        await message.channel.send(embed=embed)               
+
 # Rami's code:-----------------------------------------------------------------------------------------------
     # task: edit
     elif message.content.startswith('edit'):
@@ -390,7 +371,18 @@ async def on_message(message):
             if task_ID.isdigit():  # check task_ID is an int
                 task_ID = int(splited_sentence[1])
                 if task_ID not in toDos.keys():  # if task_ID not in toDos then edit no task and warn user
-                    await message.channel.send(f'no task is associated with the ID {task_ID}    :dizzy_face:')
+                    fill =''
+                    for key in toDos.keys():
+                        if key > 0:
+                            fill += str(key)+', '
+                    fill = fill[:len(fill)-2]
+                    embed = discord.Embed(
+                        title ='no task is associated with the ID '+str(task_ID)+'    :dizzy_face:',
+                        description = 'These are the current tasks IDs you currently can edit ['+ fill +']\nType view to see more information about your tasks.',
+                    color =0x43eb34
+                    ) 
+                    await message.channel.send(embed=embed)                        
+                    # await message.channel.send(f'no task is associated with the ID {task_ID}    :dizzy_face:')
                     return
                 else:
                     if debug: print(f'there is a task associated with the ID {task_ID}')  # debug
@@ -439,7 +431,14 @@ async def on_message(message):
                                                    '\nType "help" to see how to edit your tasks.       :eyes:')
                         return
             else:
-                await message.channel.send('Your edit message is not formatted correctly. Type help.    :eyes:')
+                embed = discord.Embed(
+                    title ="Your edit message is not formatted correctly. To edit a task send it in the format below:",
+                    description = 'edit task task_ID : new_task_details at new_task_time\n \n ex:\n edit task 4 : meal prep at 4:45pm \n HINT: dont forget the spaces around the colon',
+                color =0x43eb34
+                ) 
+                await message.channel.send(embed=embed)               
+                    
+                # await message.channel.send('Your edit message is not formatted correctly. Type help.    :eyes:')
                 return
         if debug: print('After:')  # debug = just to show the task has been edited
         if debug: print(toDos)  # debug - just to show the task has been edited
@@ -463,13 +462,10 @@ async def on_message(message):
         await message.add_reaction("👍🏾")
         await message.channel.send(embed=embed)
     # -----------------------------------------------------------------------------------------------------------
-    else:
-        await message.channel.send(
-            "Invalid format. Send a message 'help' for assistance with valid formats."
-        )
+    # else:
+    #     await message.channel.send(
+    #         "Invalid format. Send a message 'help' for assistance with valid formats."
+    #     )
 
 keep_alive.keep_alive()
-
-if __name__ == '__main__':
-    import config
-    client.run(config.token)
+client.run(TOKEN)
