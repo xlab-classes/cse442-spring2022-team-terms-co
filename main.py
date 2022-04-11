@@ -122,14 +122,14 @@ async def on_member_join(member):
 
 #Rami's Code for remind
 def schedule_job(message , message_time, taskID):
-    print('channel: ' + str(message.channel))
+    #print('channel: ' + str(message.channel))
     user_time = process_input_time(message_time)
     military_time = time_to_military(user_time)
     time_hrs = military_time[0] + military_time[1]
     time_mins = military_time[3] + military_time[4]
     task_details = user_dict[message.author.id][taskID][0]
     scheduler.add_job(func, CronTrigger(hour=time_hrs, minute=time_mins, second="0"),(message, task_details, military_time,), id=str(taskID), replace_existing=True)
-    scheduler.print_jobs()
+    #scheduler.print_jobs()
     return
 
 #Deletes a task and returns the message the bot should send to the user
@@ -177,21 +177,64 @@ def complete_task(message):
             print("Added to user dict: " , user_dict_completed)
             return "Task marked as completed!"
 
-#Prints out the tasks in completed and todo
+#TODO Prints out the tasks in completed and todo
 def userview_task(message):
-        
-    if message.author.id in user_dict:
-        user_str = ""
-        if len(user_dict[message.author.id]) > 0:
-            for item in user_dict[message.author.id]:
-                print(item)
-                user_str += "Task "  + str(item)  + ": " + str(user_dict[message.author.id][item][0]) +  "Author id: "+ str(message.author.id) +"\n"
-            return user_str
-        else:
-               return "You have no stored tasks"
+    if message.author.id not in user_dict:
+        ids = []
     else:
-        return "You have no stored tasks"
-    return "view run"
+        ids = (list(user_dict[message.author.id]))
+
+    if message.author.id not in user_dict_completed:
+        completed_ids = []
+    else:
+        completed_ids = (list(user_dict_completed[message.author.id]))
+    
+    sent =''
+  
+  
+    print("IDS: " , ids)
+    print("Completed IDS: " , completed_ids)
+
+    #Get rid of incomplete tasks 
+    if -1 in ids:
+        ids.remove(-1)
+
+    
+    todos_len = len(ids)
+    completed_len= len(completed_ids)
+    if todos_len == 1:
+        todo_tasks= ' task '
+    else:
+        todo_tasks=' tasks '
+
+    if completed_len == 1:
+        completed_tasks= ' task '
+    else:
+        completed_tasks=' tasks '       
+
+    view_title='You have '+ str(todos_len) + todo_tasks +'in progress and '+ str(completed_len) + completed_tasks + 'completed'
+    ip = ''
+    comp =''
+    if len(ids) == 0:
+        sent ="No tasks in progress type 'help' to learn how to add a task!"
+    else:    
+        for id in ids:
+            ip+='•ID:' + str(id) + '| '+ user_dict[message.author.id][id][0]+' at '+ user_dict[message.author.id][id][1]+'\n'
+        sent = 'In Progress:\n'+ip
+
+    if len(completed_ids) ==0:
+        send = "No completed tasks type 'help' to learn how to complete a task!"
+    else:    
+        for cid in completed_ids:
+            comp+='•ID:' + str(cid) + '| '+ user_dict_completed[message.author.id][cid][0]+' at '+ user_dict_completed[message.author.id][cid][1]+'\n'
+        send = 'Completed:\n' +comp
+    embed = discord.Embed(
+        title =view_title,
+        description = sent+'\n'+send,
+    color =0x7214E3
+    )
+   
+    return embed
 
 #TODO Prints out the tasks in completed and todo
 def view_task(message):
@@ -231,94 +274,111 @@ def view_task(message):
     )
     return embed
 
-@client.event
-async def on_message(message):
-    if message.author == client.user:
-        return
-    # Snigdha's code:********************************************************************************************************
-    #add task
-    regexCheck = re.match(".*(?![remind me to]).+", message.content)
-    remindMeCheck = re.match("(.*(?=[R-r]emind me to).*)", message.content)
-    if bool(regexCheck) and remindMeCheck:
-      if ' at' in message.content:
+#Add a task using the remind me to keywords
+#Put tasks into the -1 key if they do not include a time 
+def add_task(message):
+    if ' at' in message.content:
         split_index = message.content.find(' at')
         tim_e = message.content[split_index + 3:].replace(' ','')
         matched = re.match(".*([0-9]\s?[AM|am|PM|pm]+)", tim_e)
         is_match = bool(matched)
 
         if not is_match:
-            await message.channel.send(
-                "Invalid format. Send a message 'help' for assistance with valid formats."
-            )
-            return
+            return "Invalid format. Send a message 'help' for assistance with valid formats."
         
+        task = (message.content[13:split_index].strip(), tim_e)
         taskID = toDos[0] + 1
         toDos[0] = taskID
         toDos[-1] = message.content[12:split_index]
-        toDos[taskID] = (message.content[13:split_index].strip(), tim_e)
+        toDos[taskID] = task
         #Mikes Addition $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
         if message.author.id not in user_dict:
             user_dict[message.author.id] = {}
-            user_dict[message.author.id][taskID]  = (message.content[13:split_index].strip(), tim_e)
+            user_dict[message.author.id][taskID]  = task
             print("Created user dict: " , user_dict)
         else:
-            user_dict[message.author.id][taskID] = (message.content[13:split_index].strip(), tim_e)
+            user_dict[message.author.id][taskID] = task
             print("Added to user dict: " , user_dict)
-      
-        await message.channel.send(replies[random.randrange(len(replies))] + ". The task ID is " + str(taskID))  
         # Rami's Addition Schedule the job
         schedule_job(message, tim_e, taskID)
-        return
-      else:
+        return replies[random.randrange(len(replies))] + ". The task ID is " + str(taskID)
+    else:
         split_index = message.content.find(' to')
-        task = message.content[split_index + 3:].replace(' ','').strip()
-        toDos[-1] = task
-        print(toDos)
-        await message.channel.send(
-                "At what time? Example: 9am/9PM/6:13am"
-          )
-        return
-    elif bool(re.match("^[0-9].*[AM|am|PM|pm]+", message.content)):
-      print("_____" + message.content)
-      print(toDos, " counter incremented")
-      #increment task ID for the after part of at case
-      taskID = toDos[0] + 1
-      toDos[0] = taskID
-      print(taskID, " task ID")
-      toDos[taskID] = (toDos[-1], message.content)
-     #Mikes Addition $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-      if message.author.id not in user_dict:
+        task = message.content[split_index + 3:].strip()
+
+        #If the time is not added store task in a tuple at key -1 
+        if message.author.id not in user_dict:
             user_dict[message.author.id] = {}
-            user_dict[message.author.id][taskID]  = (toDos[-1], message.content)
-            print("Create user dict: " , user_dict)
-      else:
-            user_dict[message.author.id][taskID] = (message.content[13:split_index].strip(), tim_e)
-            print("Added to user dict: " , user_dict)
-      await message.channel.send(replies[random.randrange(len(replies))] + ". The task ID(time) is " + str(taskID))
-      return
-    # delete task
+            user_dict[message.author.id][-1]  = task
+            print("Created user dict timeless: " , user_dict)
+        else:
+            user_dict[message.author.id][-1] = task
+            print("Added to user dict timeless: " , user_dict)
+        
+        toDos[-1] = task
+        print("User Dict without time" , user_dict)
+
+        return "At what time? Example: 9am/9PM/6:13am"
+
+#TODO When a time is sent check to see if is associated with a previous task
+def add_task_time(message):
+    #increment task ID for the after part of at case
+    taskID = toDos[0] + 1
+    toDos[0] = taskID
+    print(taskID, " task ID")
+    toDos[taskID] = (toDos[-1], message.content)
+
+    if message.author.id not in user_dict:
+        print("User has no stored tasks")
+        return 
+    elif user_dict[message.author.id][-1] == "":
+        print("No task that needs a time")
+        return 
+    else:
+        user_dict[message.author.id][taskID] = (user_dict[message.author.id][-1], message.content)
+        user_dict[message.author.id][-1] = ""
+        print("Added the time to user dict: " , user_dict)
+
+    return replies[random.randrange(len(replies))] + ". The task ID(time) is " + str(taskID)
+    
+   
+
+@client.event
+async def on_message(message):
+    if message.author == client.user:
+        return
+    
+    #Add task
+    regexCheck = re.match(".*(?![remind me to]).+", message.content)
+    remindMeCheck = re.match("(.*(?=[R-r]emind me to).*)", message.content)
+    if bool(regexCheck) and remindMeCheck:
+        bot_message = add_task(message)
+        await message.channel.send(bot_message)
+        return
+    #Add task if the time was not previously sent
+    elif bool(re.match("^[0-9].*[AM|am|PM|pm]+", message.content)):
+        bot_message= add_task_time(message)
+        await message.channel.send(bot_message)
+        return
+    #Delete task
     elif message.content.startswith('delete '):
         bot_message = delete_task(message)
         await message.channel.send(bot_message)
         return
-    #completed task:
+    #Completed task
     elif message.content.startswith('completed '):
         bot_message = complete_task(message)
         await message.channel.send(bot_message)
         return
-# Elijah's code:********************************************************************************************************
     #view task:
     elif message.content.startswith('userview'):
         bot_message = userview_task(message)
-        await message.channel.send(bot_message)
+        await message.channel.send(embed= bot_message)
         return 
     elif message.content.startswith('view'):
         bot_message = view_task(message)
         await message.channel.send(embed=bot_message)
-
-#***********************************************************************************************************************
-# Elijah's code:********************************************************************************************************
-    #clear all
+    #clear all currently does not work with new dictionary
     elif message.content.startswith('clear all tasks') or message.content.startswith('clear'):
         ids = list(toDos)
         completed_ids = list(completed)
