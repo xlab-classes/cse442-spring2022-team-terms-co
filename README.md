@@ -43,6 +43,9 @@ You can control the mood of message reminders sent by TaskBot. [In Progress...]
 Let's try using TaskBot to schedule our tasks. We will start by adding our first task by sending the bot the following message: 
 * start!
 > use this command to create a new seperate channel to interact with the ToDo Bot!
+
+<img width="633" alt="image" src="https://user-images.githubusercontent.com/40993241/163066318-83a9681f-f150-4ed8-abe0-c2e54ecba5ea.png">
+
 *remind me to submit my homework at 
 11:00am*. The bot will reply with:
 <br/>
