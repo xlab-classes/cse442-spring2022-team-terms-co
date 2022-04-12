@@ -2,6 +2,10 @@
 
 This bot allows our users to have a friend that helps them organize their tasks. The bot has a natural lanuage API where we allow our users to:
 
+_0) Create the task channel
+        - If you want to organize your tasks on a specific channel on your discord server to interact with the bot, use the command 'start!'
+        <img width="577" alt="image" src="https://user-images.githubusercontent.com/40993241/163065966-9513e471-9b1f-4b54-9e36-1b8f11137853.png">
+
 _1) Add a task_\
         - Example: "remind me to sleep at 10:00 pm" or "remind me to run at 6pm". This task gets assigned a taskID which the user is informed of and can double check at any time by typing 'view'. 
         
