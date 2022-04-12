@@ -23,6 +23,7 @@ To simplify using the bot for new users, we have included some commands that the
 
 |           Feature          |                        Command                            |         
 | -------------------------- | --------------------------------------------------------- |              
+| Creating a seperate channel|  *start!*
 | Adding a Task              |  *remind me to task_description at desired_time*          |      
 | Editing a Task             |  *edit task task_ID : new_task_details at new_task_time*  |              
 | Deleting a Task            |  *delete task_ID*                                         |     
@@ -39,7 +40,10 @@ You can control the mood of message reminders sent by TaskBot. [In Progress...]
 <img src="https://github.com/favicon.ico" width="48">
 
 # **A Walkthrough**
-Let's try using TaskBot to schedule our tasks. We will start by adding our first task by sending the bot the following message: *remind me to submit my homework at 
+Let's try using TaskBot to schedule our tasks. We will start by adding our first task by sending the bot the following message: 
+* start!
+> use this command to create a new seperate channel to interact with the ToDo Bot!
+*remind me to submit my homework at 
 11:00am*. The bot will reply with:
 <br/>
 <br/>
