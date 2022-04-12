@@ -26,6 +26,7 @@ completed = {}
 
 user_dict = {}
 user_dict_completed = {}
+channelOn = {0:0}
 #toDos =  { taskID: (task_details, tim_e) }
 #completed =  { taskID: (task_details, tim_e) }
 
@@ -368,6 +369,14 @@ def add_task_time(message):
 
     return replies[random.randrange(len(replies))] + ". The task ID(time) is " + str(taskID)
     
+ def create_channel(message):
+       if message.content == "start!" and not channelOn[0]:
+      channel = await message.guild.create_text_channel('toDos')
+      channelOn[0] = 1
+      await message.channel.send(
+                    "New channel: 'todos' to schedule your tasks has been created!"
+                )
+      return
    
 
 @client.event
@@ -381,7 +390,13 @@ async def on_message(message):
     #Add task
     regexCheck = re.match(".*(?![remind me to]).+", message.content)
     remindMeCheck = re.match("(.*(?=[R-r]emind me to).*)", message.content)
-    if bool(regexCheck) and remindMeCheck:
+    #Create new channel
+    if message.content.startswith('start!') and not channelOn[0]:
+        channel = await message.guild.create_text_channel('toDos')
+        channelOn[0] = 1
+        await message.channel.send("New channel: 'todos' to schedule your tasks has been created!")
+        return
+    elif bool(regexCheck) and remindMeCheck:
         bot_message = add_task(message)
         await message.channel.send(bot_message)
         return
