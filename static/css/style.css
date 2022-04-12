@@ -16,10 +16,9 @@ body {
 }
 
 .addbotButton{
-	background-color: white;
 	font-family: monospace;
 	border-radius: 15%;
-	align-self: center;
+	align-content: center;
 }
 
 header {
@@ -30,7 +29,6 @@ header {
 	color: white;
 	text-align: center;
 }
-
 
 h1 {
 	text-transform: uppercase;
@@ -90,7 +88,6 @@ p {
 
 .contact {
 	padding:170px 0 350px;
-	background: url(/static/assets/img/wallpaper_lavender.png);
 }
 
 .navbar {
