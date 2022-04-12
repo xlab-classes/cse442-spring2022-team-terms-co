@@ -111,14 +111,6 @@ async def on_message(message):
     usr_important_message = message.content.split() # parsing user's message for makring tasks as important
 
     # Snigdha's code:***************************************************************************************************
-    # create channel
-    if message.content == "start!" and not channelOn[0]:
-      channel = await message.guild.create_text_channel('toDos')
-      channelOn[0] = 1
-      await message.channel.send(
-                    "New channel: 'todos' to schedule your tasks has been created!"
-                )
-      return
     # add task
     regexCheck = re.match(".*(?![remind me to]).+", message.content)
     remindMeCheck = re.match("(.*(?=[R-r]emind me to).*)", message.content)
