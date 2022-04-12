@@ -1,5 +1,8 @@
+from sched import scheduler
+from winreg import QueryReflectionKey
 from distutils.command.config import config
 from unicodedata import name
+from pytz import timezone
 import keep_alive
 import os
 import random
@@ -9,6 +12,9 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
 from time_manager import process_input_time
 from time_manager import time_to_military
+import quotes
+import config
+from user_message_manager import help_command_message, examples_command_message, tips_command_message, important_task_message, not_important_task_message, view_important_tasks, bot_greeting_msg, edit_important_tasks
 
 intents = discord.Intents.default()
 intents.members = True
@@ -27,6 +33,25 @@ replies = [
     "Great ", "Awesome ", "Good going! ", " Attayou! ", "What a champ! ",
     "Rest assured! ", "Noted! "
 ]
+
+response_messages = {-1:1,
+                     1:quotes.normal,#normal
+                     2:quotes.motivate,#motivational
+                     3:quotes.casual#casual
+                    }
+quotes={-1:1,
+        1:quotes.cliche,
+        2:quotes.motivational,
+        3:quotes.funny,
+        }
+def change_mood(emoji):
+    if   emoji == '🙂':
+        response_messages[-1] = 1
+    elif emoji == '💪':
+        response_messages[-1] = 2
+    elif emoji == '😎':
+        response_messages[-1] = 3
+
 # AsyncIOScheduler() is to be used to send the user messages in real-time:
 scheduler = AsyncIOScheduler()          # initialize the scheduler
 scheduler.start()                       # start the schedule
@@ -40,17 +65,26 @@ async def func(msg, task_details, task_time):
     await send_embed_message(msg, task_details, task_time)
 
 async def send_embed_message(msg, task_details, task_time):
+    tone = response_messages[-1]
+    random_message = random.randrange(0,len(response_messages[tone]))
+    quote_mood = quotes[-1]
+    random_quote = random.randrange(0,len(quotes[quote_mood]))
+    emoji = ''
+    if   tone == 1:
+        emoji = '  🙂'       
+    elif tone == 2:
+        emoji = '  💪'
+    elif tone == 3:
+        emoji = '  😎'
+
     """
         A function to generate an embed message template containing the details of a task previously scheduled
         by the user
     """
     embed = discord.Embed(
-        title="Event Details",
-        description="Task Description: " + task_details + "\n"
-                    + "\n"
-                   + ":clock1: " + task_time + "\n",
-        color=0xEABBC2)#0x6A5ACD
-    #await c.send(embed=embed)
+        title = response_messages[tone][random_message] + task_details + emoji,
+        description= quotes[quote_mood][random_quote],
+        color=0xEABBC2)
     await msg.channel.send(embed=embed)
 
 #create a func to delete message
@@ -60,13 +94,6 @@ def delete(id):
     scheduler.print_jobs()
 
 
-def change_mood(emoji):
-    if   emoji == '🙂':
-        response_messages[-1] = 1
-    elif emoji == '💪':
-        response_messages[-1] = 2
-    elif emoji == '😎':
-        response_messages[-1] = 3
 
 # AsyncIOScheduler() is to be used to send the user messages in real-time:
 scheduler = AsyncIOScheduler()          # initialize the scheduler
@@ -348,6 +375,9 @@ async def on_message(message):
     if message.author == client.user:
         return
     
+    
+    usr_important_message = message.content.split() # parsing user's message for makring tasks as important
+
     #Add task
     regexCheck = re.match(".*(?![remind me to]).+", message.content)
     remindMeCheck = re.match("(.*(?=[R-r]emind me to).*)", message.content)
@@ -511,6 +541,57 @@ async def on_message(message):
         await message.add_reaction("👍🏾")
         await message.channel.send(embed=embed)
     # -----------------------------------------------------------------------------------------------------------
+     # Rami's code:******************************************************************************************************
+    # task: tips        # user story: make the bot more user-friendly
+    elif message.content.lower().startswith('tips'):
+        embed = discord.Embed(
+        title="Tips",
+            description=tips_command_message(),
+        color=0x6A5ACD)
+        await message.add_reaction("👍🏾")
+        await message.channel.send(embed=embed)
+    # ******************************************************************************************************************
+
+    # ******************************************************************************************************************
+    # task: Replying to greetings        # user story: make the bot more user-friendly
+    elif (message.content.lower().startswith('hey') or
+          message.content.lower().startswith('hi') or
+          message.content.lower().startswith('hello')):
+
+        await message.add_reaction("👋")
+        await message.channel.send(bot_greeting_msg())
+    # ******************************************************************************************************************
+
+    # ******************************************************************************************************************
+    # Task: Important
+    elif (message.content.lower().startswith('mark task') and
+          usr_important_message[3].lower() == 'as' and
+          usr_important_message[4].lower() == 'important'):
+
+        await message.channel.send(important_task_message(message.content, 2, toDos, important_tasks))
+    # ******************************************************************************************************************
+
+    # ******************************************************************************************************************
+    # Task: Marking an important task as not important. If the task is not marked as important, then it will not be
+    # affected. Assume the correct user message format is: "mark task task_ID as not important"
+    elif (message.content.lower().startswith('mark task') and
+          usr_important_message[3].lower() == 'as' and
+          usr_important_message[4].lower() == 'not' and
+          usr_important_message[5].lower() == 'important'):
+
+          await message.channel.send(not_important_task_message(message.content, 2, important_tasks))
+    # ******************************************************************************************************************
+
+    # ******************************************************************************************************************
+    # Task: Viewing all Important tasks.
+    elif (message.content.lower().startswith('list important tasks')):
+        embed = discord.Embed(
+            title="Important Tasks",
+            description=view_important_tasks(important_tasks),
+            color=0xFF0000) # red
+        await message.channel.send(embed=embed)
+    # ******************************************************************************************************************
+
     else:
         await message.channel.send(
             "Invalid format. Send a message 'help' for assistance with valid formats."
