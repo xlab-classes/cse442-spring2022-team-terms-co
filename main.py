@@ -369,14 +369,6 @@ def add_task_time(message):
 
     return replies[random.randrange(len(replies))] + ". The task ID(time) is " + str(taskID)
     
- def create_channel(message):
-       if message.content == "start!" and not channelOn[0]:
-      channel = await message.guild.create_text_channel('toDos')
-      channelOn[0] = 1
-      await message.channel.send(
-                    "New channel: 'todos' to schedule your tasks has been created!"
-                )
-      return
    
 
 @client.event
