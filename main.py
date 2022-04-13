@@ -18,7 +18,7 @@ client = discord.Client(intents=discord.Intents.all())
 # Read the private key from a local file
 toDos = {0: 0, -1: ''} # toDos =  { taskID: (task_details, tim_e) }
 completed = {} # completed =  { taskID: (task_details, tim_e) }
-
+channelOn = {0:0}
 
 
 user_dict = {}
