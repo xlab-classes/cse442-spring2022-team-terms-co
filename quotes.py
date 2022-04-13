@@ -24,9 +24,9 @@ motivational = [
                 "When you give joy to other people, you get more joy in return.\nYou should give a good thought to happiness that you can give out.\n—Eleanor Roosevelt",
                 "When you change your thoughts,\nremember to also change your world.\n—Norman Vincent Peale",
                 "It is only when we take chances, when our lives improve.\nThe initial and the most difficult risk that we need to take is to become honest.\n—Walter Anderson",
-                "Nature has given us all the pieces required to achieve exceptional wellness and health,\nbut has left it to us to put these pieces together.\n—Diane McLaren"
-                "None of us can see the future,\nForget it whatever's gon' happen gon' happen\n-Aha Gazelle"
-                "Thought I was finished but I'm too resilient, to keep it a trillion I'm just getting started\n-Aha Gazelle"
+                "Nature has given us all the pieces required to achieve exceptional wellness and health,\nbut has left it to us to put these pieces together.\n—Diane McLaren",
+                "None of us can see the future,\nForget it whatever's gon' happen gon' happen\n-Aha Gazelle",
+                "Thought I was finished but I'm too resilient, to keep it a trillion I'm just getting started\n-Aha Gazelle",
                 "Don't take this time that you have on this planet for granted,\nYou rushin' to die, What's the hurry? I'm tryna age like Bron Bron,\nBetter with time like fine wine, Making the most of my prime\n-Aha Gazelle"
                 ]
 
