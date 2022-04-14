@@ -21,6 +21,7 @@ completed = {}
 
 user_dict = {}
 user_dict_completed = {}
+user_dict_overdue ={}
 #toDos =  { taskID: (task_details, tim_e) }
 #completed =  { taskID: (task_details, tim_e) }
 
@@ -58,11 +59,17 @@ def change_mood(emoji):
 scheduler = AsyncIOScheduler()          # initialize the scheduler
 scheduler.start()                       # start the schedule
 
-async def func(msg, task_details, task_time):
+async def func(msg, task_details, task_time, taskID):
     """
     A function to be added to the scheduler when a job is added. This function sends an embed message notifying the
     user of the task they scheduled.
     """
+    print("Scheduling alert went off")
+    print("MSG author " , msg.author.id)
+    print("Task details: ", task_details)
+    print("Task Time: ", task_time)
+    print("Task ID: ", taskID)
+    add_to_overdue(msg, taskID)
     await client.wait_until_ready()
     await send_embed_message(msg, task_details, task_time)
 
@@ -89,6 +96,25 @@ async def send_embed_message(msg, task_details, task_time):
         color=0xEABBC2)
     await msg.channel.send(embed=embed)
 
+#Removes a task from in progress and adds it to overdue
+def add_to_overdue(msg, taskID):
+    if msg.author.id not in user_dict:
+        return "Author has no Dictionary"
+    
+    if len(user_dict[msg.author.id]) == 0:
+        return "This user has no stored messages"
+    
+    overdue_task = user_dict[msg.author.id].pop(taskID)
+
+    if msg.author.id not in user_dict_overdue:
+        user_dict_overdue[msg.author.id] = {}
+        user_dict_overdue[msg.author.id][taskID] = overdue_task
+        print("Overdue Dict Created: " , user_dict_overdue) 
+
+    else:
+        user_dict_overdue[msg.author.id][taskID] = overdue_task
+        print("Overdue Dict : " , user_dict_overdue) 
+    return "Added to overdue"
 #call it in delete and clear all
 def delete(id):
     scheduler.remove_job(id)
@@ -109,7 +135,7 @@ def schedule_job(message , message_time, taskID):
     time_hrs = military_time[0] + military_time[1]
     time_mins = military_time[3] + military_time[4]
     task_details = user_dict[message.author.id][taskID][0]
-    scheduler.add_job(func, CronTrigger(hour=time_hrs, minute=time_mins, second="0"),(message, task_details, military_time,), id=str(taskID), replace_existing=True)
+    scheduler.add_job(func, CronTrigger(hour=time_hrs, minute=time_mins, second="0"),(message, task_details, military_time, taskID,), id=str(taskID), replace_existing=True)
     return
 
 #Deletes a task and returns the message the bot should send to the user
