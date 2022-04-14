@@ -64,11 +64,6 @@ async def func(msg, task_details, task_time, taskID):
     A function to be added to the scheduler when a job is added. This function sends an embed message notifying the
     user of the task they scheduled.
     """
-    print("Scheduling alert went off")
-    print("MSG author " , msg.author.id)
-    print("Task details: ", task_details)
-    print("Task Time: ", task_time)
-    print("Task ID: ", taskID)
     add_to_overdue(msg, taskID)
     await client.wait_until_ready()
     await send_embed_message(msg, task_details, task_time)
@@ -243,9 +238,16 @@ def userview_task(message):
     
     sent =''
   
+
+    if message.author.id not in user_dict_overdue:
+            overdue_ids = []
+    else:
+            overdue_ids = (list(user_dict_overdue[message.author.id]))
+        
   
     print("IDS: " , ids)
     print("Completed IDS: " , completed_ids)
+    print("Overdue IDs " , overdue_ids)
 
     #Get rid of incomplete tasks 
     if -1 in ids:
@@ -254,6 +256,7 @@ def userview_task(message):
     
     todos_len = len(ids)
     completed_len= len(completed_ids)
+    overdue_len = len(overdue_ids)
     if todos_len == 1:
         todo_tasks= ' task '
     else:
@@ -262,11 +265,21 @@ def userview_task(message):
     if completed_len == 1:
         completed_tasks= ' task '
     else:
-        completed_tasks=' tasks '       
+        completed_tasks=' tasks '   
 
-    view_title='Hey '+  message.author.name + ' you have '+ str(todos_len) + todo_tasks +'in progress and '+ str(completed_len) + completed_tasks + 'completed'
+    if overdue_len == 1:
+        overdue_tasks= ' task '
+    else:
+        overdue_tasks=' tasks '    
+
+    view_title=('Hey '+  message.author.name + ' you have '
+    + str(todos_len) + todo_tasks +'in progress and '
+    + str(completed_len) + completed_tasks + 'completed and '
+    + str(overdue_len) + overdue_tasks + ' overdue')
+
     ip = ''
     comp =''
+    d = ''
     if len(ids) == 0:
         sent ="No tasks in progress type 'help' to learn how to add a task!"
     else:    
@@ -284,9 +297,17 @@ def userview_task(message):
         for cid in completed_ids:
             comp+='•ID:' + str(cid) + '| '+ user_dict_completed[message.author.id][cid][0]+' at '+ user_dict_completed[message.author.id][cid][1]+'\n'
         send = 'Completed:\n' +comp
+
+    if len(overdue_ids) ==0:
+        due = "No tasks are overdue, good job!"
+    else:    
+        for did in overdue_ids:
+            d+='•ID:' + str(did) + '| '+ user_dict_overdue[message.author.id][did][0]+' at '+ user_dict_overdue[message.author.id][did][1]+'\n'
+        due = 'Overdue:\n' +d 
+
     embed = discord.Embed(
         title =view_title,
-        description = sent+'\n'+send,
+        description = sent+'\n'+send + '\n' + due,
     color =0x7214E3
     )
    
