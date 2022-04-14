@@ -96,7 +96,8 @@ def add_to_overdue(msg, taskID):
     if msg.author.id not in user_dict:
         return "Author has no Dictionary"
     
-    if len(user_dict[msg.author.id]) == 0:
+    if taskID not in user_dict[msg.author.id]:
+        print("The task was already completed so no need to move it to overdue")
         return "This user has no stored messages"
     
     overdue_task = user_dict[msg.author.id].pop(taskID)
@@ -196,14 +197,30 @@ def complete_task(message):
 
     message_id = int(message_id.strip())
 
-    if message_id not in user_dict[message.author.id]:
+    if message.author.id not in user_dict and message.author.id not in user_dict_overdue:
         embed = discord.Embed(
-        title ="The task with this ID has either already been completed or has been deleted",
+        title ="You have no overdue or in progress tasks",
         color =0x4e03fc
         )    
         return embed
+    
+    if message.author.id in user_dict and message.author.id not in user_dict_overdue:
+        if message_id not in user_dict[message.author.id]:
+            embed = discord.Embed(
+            title ="The task with this ID has either already been completed or has been deleted",
+            color =0x4e03fc
+            )    
+            return embed
+    if message.author.id in user_dict_overdue and message.author.id not in user_dict:
+        if message_id not in user_dict_overdue[message.author.id]:
+            embed = discord.Embed(
+            title ="The task with this ID has has either already been deleted or completed",
+            color =0x4e03fc
+            )    
+            return embed
 
-    if message.author.id not in user_dict_completed:
+    if message_id in user_dict[message.author.id]:
+        if message.author.id not in user_dict_completed:
             user_dict_completed[message.author.id] = {}
             user_dict_completed[message.author.id][message_id]  = user_dict[message.author.id][message_id]
             user_dict[message.author.id].pop(message_id)
@@ -214,7 +231,7 @@ def complete_task(message):
             color =0x4e03fc
             )    
             return embed      
-    else:
+        else:
             user_dict_completed[message.author.id][message_id]  = user_dict[message.author.id][message_id]
             user_dict[message.author.id].pop(message_id)
             print("Added to user dict: " , user_dict_completed)
@@ -223,6 +240,30 @@ def complete_task(message):
             color =0x4e03fc
             )    
             return embed        
+    if message_id in user_dict_overdue[message.author.id]:
+        if message.author.id not in user_dict_completed:
+            user_dict_completed[message.author.id] = {}
+            user_dict_completed[message.author.id][message_id]  = user_dict_overdue[message.author.id][message_id]
+            user_dict_overdue[message.author.id].pop(message_id)
+
+            print("Created completed dict: " , user_dict_completed)
+            embed = discord.Embed(
+            title ="Congrats on completing your task!",
+            color =0x4e03fc
+            )    
+            return embed      
+        else:
+            user_dict_completed[message.author.id][message_id]  = user_dict_overdue[message.author.id][message_id]
+            user_dict_overdue[message.author.id].pop(message_id)
+            print("Added to user dict: " , user_dict_completed)
+            embed = discord.Embed(
+            title ="Task marked as completed",
+            color =0x4e03fc
+            )    
+            return embed        
+    return discord.Embed(title ="No task with this ID exists for your account",color =0x4e03fc)    
+
+    
 
 #TODO Prints out the tasks in completed and todo
 def userview_task(message):
