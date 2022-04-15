@@ -5,6 +5,8 @@ import re
 import discord
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
+from discord.ext import commands
+from discord_components import SelectOption, Select, DiscordComponents
 from time_manager import process_input_time
 from time_manager import time_to_military
 import quotes
@@ -13,7 +15,7 @@ from user_message_manager import help_command_message, examples_command_message,
 
 intents = discord.Intents.default()
 intents.members = True
-client = discord.Client(intents=discord.Intents.all())
+bot = commands.Bot(command_prefix='/')      # new
 
 #Read the private key from a local file
 toDos = {0: 0, -1: ''}
@@ -65,7 +67,7 @@ async def func(msg, task_details, task_time, taskID):
     user of the task they scheduled.
     """
     add_to_overdue(msg, taskID)
-    await client.wait_until_ready()
+    await bot.wait_until_ready()
     await send_embed_message(msg, task_details, task_time)
 
 async def send_embed_message(msg, task_details, task_time):
@@ -116,13 +118,64 @@ def delete(id):
     scheduler.remove_job(id)
     scheduler.print_jobs()
  
-@client.event
+@bot.event
 async def on_ready():
-    print(client.user.name, ' has connected to Discord!')
+    DiscordComponents(bot)  # new
+    print(bot.user.name, ' has connected to Discord!')
 
-@client.event
+@bot.event
 async def on_member_join(member):
     await member.send('hi')
+    
+# Enabling a drop-down menu to list the commands supported by the bot:
+@bot.command()
+async def commands(ctx):    # new
+    if ctx.author.id == 670325098598629377 or 426376741028888576:
+        await ctx.send(
+            components = [
+            Select(
+                placeholder = 'Supported Commands',
+                options = [
+                    SelectOption(label="schedule a task", description="type: remind me to 'task' at 'time'", value="value1"),
+                    SelectOption(label="delete a task", description='type: delete task_ID', value="value2"),
+                    SelectOption(label="edit a task",  description='type: edit task_ID : new_task task_time', value="value3"),
+                    SelectOption(label = "view your schedule", description='type: view', value = "value4"),
+                    SelectOption(label="make a task important", description='type: mark task task_ID as important', value="value5"),
+                    SelectOption(label="remove important tag", description='type: mark task task_ID as not important', value="value6"),
+                    SelectOption(label="get help", description='type: help', value="value7"),
+                    SelectOption(label="clear your schedule", description='type: clear all', value="value8"),
+                    SelectOption(label="view your important tasks", description='type: list important tasks', value="value9"),
+                    SelectOption(label = "see examples of the commands", description='type: examples', value = "value10")
+                    ])])
+
+# Specifying the events that take place when the user interacts with the /commands drop-down menu:
+@bot.event
+async def on_select_option(interaction):    # new
+   # await interaction.respond(type=6)
+   if interaction.values[0] == "value1":
+       await interaction.send("type: remind me to 'task' at 'time'")
+   elif interaction.values[0] == "value2":
+       await interaction.send('type: delete task_ID')
+   elif interaction.values[0] == "value3":
+       await interaction.send('type: edit task_ID : new_task task_time')
+   elif interaction.values[0] == "value4":
+       await interaction.send('type: view')
+   elif interaction.values[0] == "value5":
+       await interaction.send('type: mark task task_ID as important')
+   elif interaction.values[0] == "value6":
+       await interaction.send('type: mark task task_ID as important')
+   elif interaction.values[0] == "value7":
+       await interaction.send('type: help')
+   elif interaction.values[0] == "value8":
+       await interaction.send('type: clear all')
+   elif interaction.values[0] == "value9":
+       await interaction.send('type: list important tasks')
+   elif interaction.values[0] == "value10":
+       await interaction.send('type: examples')
+   else :
+       await interaction.respond(type=6)
+
+    
 
 #Rami's Code for remind
 def schedule_job(message , message_time, taskID):
@@ -160,6 +213,7 @@ def delete_task(message):
         return embed        
     elif int(to_del) in user_dict[message.author.id]:
         user_dict[message.author.id].pop(int(to_del.strip()))
+        important_tasks.pop(int(to_del.strip()))  # new
         embed = discord.Embed(
         title ="Successfully deleted!",
         color =0xeb34c9
@@ -167,6 +221,7 @@ def delete_task(message):
         return embed        
     elif int(to_del) in user_dict_completed[message.author.id]:
         user_dict_completed[message.author.id].pop(int(to_del.strip()))
+        important_tasks.pop(int(to_del.strip()))  # new
         embed = discord.Embed(
         title ="Successfully deleted!",
         color =0xeb34c9
@@ -493,9 +548,9 @@ async def create_channel(message):
                      )
     return
 
-@client.event
+@bot.event
 async def on_message(message):
-    if message.author == client.user:
+    if message.author == bot.user:
         return
     
     usr_important_message = message.content.split() # parsing user's message for makring tasks as important
@@ -770,9 +825,11 @@ async def on_message(message):
             color=0xFF0000) # red
         await message.channel.send(embed=embed)
     # ******************************************************************************************************************
+    else:       # new
+        await bot.process_commands(message)
 
 keep_alive.keep_alive()
 
 if __name__ == '__main__':
     import config
-    client.run(config.token)
+    bot.run(config.token)
