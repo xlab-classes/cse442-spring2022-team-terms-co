@@ -1,18 +1,14 @@
 import random
 
-def help_command_message():
-    """ This function returns the bot message when the user makes a 'help' request... """
+def help_command_message():     # NEW
+    """ This function returns the bot message when the user makes a 'help' request. """
 
-    bot_help_msg = ("I support the following commands:\n" 
-            "\n:one: " + "add a task by typing \"**remind me to \'task\' at \'time\'**\n" +
-            "\n:two: " + "delete a task by typing \"**delete task_ID**\"\n" +
-            "\n:three: " + "edit a task by typing \"**edit task_ID : new_task task_time**\" for example \"edit 1 : drink chamomile and read at 8:00 pm\"\n" +
-            "\n:four: " + "check all tasks you completed by typing \"**completed**\"\n" +
-            "\n:five: " + "view all tasks you scheduled and completed by typing \"**view**\"\n" +
-            "\n:six: " + "complete a task by typing \"**completed task task_ID**\"\n" +
-            "\n:seven: " + "mark a task as important by typing \"**mark task task_ID as important**\"\n" +
-            "\n:eight: " + "mark a task as not important anymore by typing \"**mark task task_ID as not important**\"\n" +
-            "\n:nine: " + "clear your schedule by typing \"**clear all**\"\n")
+    bot_help_msg = ("Helpful Tips:\n" 
+        "\n:bulb: " + "you can get any task_ID by typing \"**view**\"\n" +
+        "\n:bulb: " + "you can change the mood by typing \"**change mood**\"\n" +
+        "\n:bulb: " + "if you have a task marked as important and you want to remove that tag, simply type \"**mark task task_ID as not important**\"\n" +
+        "\n:bulb: " + "you can see examples of the commands I support by typing \"**examples**\"\n" +
+        "\n:bulb: " + "to see the commands I support, type \"**/commands**\"\n")
     return bot_help_msg
 
 def examples_command_message():
@@ -27,7 +23,7 @@ def examples_command_message():
     )
     return bot_examples_msg
 
-def tips_command_message():
+def tips_command_message():     # NEW
     """ This function returns the bot message when the user enters a 'tips' request. """
 
     bot_tips_msg = (
@@ -35,7 +31,8 @@ def tips_command_message():
         "\n:bulb: " + "you can change the mood by typing \"**change mood**\"\n" +
         "\n:bulb: " + "if you have a task marked as important and you want to remove that tag, simply type \"**mark task task_ID as not important**\"\n" +
         "\n:bulb: " + "you can see examples of the commands I support by typing \"**examples**\"\n" +
-        "\n:bulb: " + "whenever you are stuck using a command, type \"**help**\"\n"
+        "\n:bulb: " + "whenever you are stuck using a command, type \"**help**\"\n" +
+        "\n:bulb: " + "you can visit our website by clicking on: https://www-student.cse.buffalo.edu/CSE442-542/2022-Spring/cse-442s/cse442-spring2022-team-terms-co/static/\n"
     )
     return bot_tips_msg
 
