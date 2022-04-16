@@ -29,8 +29,6 @@ user_dict_overdue ={}
 
 important_tasks = {}  # important_tasks = {taskID : "task_details + time" }
 
-channelOn = {0:0}
-
 replies = [
     "Great ", "Awesome ", "Good going! ", " Attayou! ", "What a champ! ",
     "Rest assured! ", "Noted! "
@@ -545,14 +543,6 @@ def add_task_time(message):
     return embed
     # return replies[random.randrange(len(replies))] + ". The task ID(time) is " + str(taskID)  
 
-async def create_channel(message):
-    if message.content == "start!" and not channelOn[0]:
-         channel = await message.guild.create_text_channel('toDos')
-         channelOn[0] = 1
-         await message.channel.send(
-                         "New channel: 'todos' to schedule your tasks has been created!"
-                     )
-    return
 
 @bot.event
 async def on_message(message):
@@ -564,17 +554,28 @@ async def on_message(message):
     #Add task
     regexCheck = re.match(".*(?![remind me to]).+", message.content)
     remindMeCheck = re.match("(.*(?=[R-r]emind me to).*)", message.content)
+    channelRegexCheck = re.match('[S-s]tart \w*$', message.content)
     if bool(regexCheck) and remindMeCheck:
-
         bot_message = add_task(message)
         await message.channel.send(embed = bot_message)
         return
-    
-    elif message.content.startswith('start!') and not channelOn[0]:
+    elif message.content.startswith('Start') or message.content.startswith('start') :
+      print("--", message.content, "- - ", bool(channelRegexCheck))
+      if message.content == 'start!' or message.content == 'Start!':
         channel = await message.guild.create_text_channel('toDos')
-        channelOn[0] = 1
-        await message.channel.send("New channel: 'todos' to schedule your tasks has been created!")
-        return    
+        await message.channel.send("New defualt channel: 'todos' to schedule your tasks has been created!")
+        return
+      elif bool(channelRegexCheck):
+        print("btuh")
+        channelName = message.content.split(' ')[1]
+        print(channelName)
+        channel = await message.guild.create_text_channel(channelName)
+        await message.channel.send("New channel: ", channelName, " to schedule your tasks has been created!")
+        return
+      else:
+        await message.channel.send("Invalid start format, please type help for format guide")
+        return
+        
 
     #Add task if the time was not previously sent
     elif bool(re.match("^[0-9].*[AM|am|PM|pm]+", message.content)):
@@ -838,5 +839,4 @@ async def on_message(message):
 keep_alive.keep_alive()
 
 if __name__ == '__main__':
-    import config
-    bot.run(config.token)
+    bot.run('OTQ1ODQxNjU3MTkzMDQxOTcw.YhWBrw.wQoyO-1_DOVN2XJneQ-M8FbpDvQ')
