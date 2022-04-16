@@ -129,52 +129,58 @@ async def on_member_join(member):
     
 # Enabling a drop-down menu to list the commands supported by the bot:
 @bot.command()
-async def commands(ctx):    # new
+async def commands(ctx):  # new
     if ctx.author.id == 670325098598629377 or 426376741028888576:
         await ctx.send(
-            components = [
-            Select(
-                placeholder = 'Supported Commands',
-                options = [
-                    SelectOption(label="schedule a task", description="type: remind me to 'task' at 'time'", value="value1"),
-                    SelectOption(label="delete a task", description='type: delete task_ID', value="value2"),
-                    SelectOption(label="edit a task",  description='type: edit task_ID : new_task task_time', value="value3"),
-                    SelectOption(label = "view your schedule", description='type: view', value = "value4"),
-                    SelectOption(label="make a task important", description='type: mark task task_ID as important', value="value5"),
-                    SelectOption(label="remove important tag", description='type: mark task task_ID as not important', value="value6"),
-                    SelectOption(label="get help", description='type: help', value="value7"),
-                    SelectOption(label="clear your schedule", description='type: clear all', value="value8"),
-                    SelectOption(label="view your important tasks", description='type: list important tasks', value="value9"),
-                    SelectOption(label = "see examples of the commands", description='type: examples', value = "value10")
+            components=[
+                Select(
+                    placeholder='Supported Commands',
+                    options=[
+                        SelectOption(label="schedule a task", description="type: remind me to 'task details' at 'task time'",
+                                     value="value1"),
+                        SelectOption(label="delete a task", description="type: delete 'task_ID'", value="value2"),
+                        SelectOption(label="edit a task", description="type: edit 'task_ID' : 'new task details' at 'new task time' ",
+                                     value="value3"),
+                        SelectOption(label="view your schedule", description="type: view", value="value4"),
+                        SelectOption(label="make a task important", description="type: mark task 'task_ID' as important",
+                                     value="value5"),
+                        SelectOption(label="remove important tag",
+                                     description="type: mark task 'task_ID' as not important", value="value6"),
+                        SelectOption(label="get help", description='type: help', value="value7"),
+                        SelectOption(label="clear your schedule", description='type: clear all', value="value8"),
+                        SelectOption(label="view your important tasks", description='type: list important tasks',
+                                     value="value9"),
+                        SelectOption(label="see examples of the commands", description='type: examples',
+                                     value="value10")
                     ])])
+
 
 # Specifying the events that take place when the user interacts with the /commands drop-down menu:
 @bot.event
-async def on_select_option(interaction):    # new
-   # await interaction.respond(type=6)
-   if interaction.values[0] == "value1":
-       await interaction.send("type: remind me to 'task' at 'time'")
-   elif interaction.values[0] == "value2":
-       await interaction.send('type: delete task_ID')
-   elif interaction.values[0] == "value3":
-       await interaction.send('type: edit task_ID : new_task task_time')
-   elif interaction.values[0] == "value4":
-       await interaction.send('type: view')
-   elif interaction.values[0] == "value5":
-       await interaction.send('type: mark task task_ID as important')
-   elif interaction.values[0] == "value6":
-       await interaction.send('type: mark task task_ID as important')
-   elif interaction.values[0] == "value7":
-       await interaction.send('type: help')
-   elif interaction.values[0] == "value8":
-       await interaction.send('type: clear all')
-   elif interaction.values[0] == "value9":
-       await interaction.send('type: list important tasks')
-   elif interaction.values[0] == "value10":
-       await interaction.send('type: examples')
-   else :
-       await interaction.respond(type=6)
-
+async def on_select_option(interaction):  # new
+    # await interaction.respond(type=6)
+    if interaction.values[0] == "value1":
+        await interaction.send("type: remind me to 'task details' at 'task time'")
+    elif interaction.values[0] == "value2":
+        await interaction.send("type: delete 'task_ID'")
+    elif interaction.values[0] == "value3":
+        await interaction.send("type: edit 'task_ID' : 'new task details' at 'new task time' ")
+    elif interaction.values[0] == "value4":
+        await interaction.send('type: view')
+    elif interaction.values[0] == "value5":
+        await interaction.send("type: mark task 'task_ID' as important")
+    elif interaction.values[0] == "value6":
+        await interaction.send("type: mark task 'task_ID' as not important")
+    elif interaction.values[0] == "value7":
+        await interaction.send('type: help')
+    elif interaction.values[0] == "value8":
+        await interaction.send('type: clear all')
+    elif interaction.values[0] == "value9":
+        await interaction.send('type: list important tasks')
+    elif interaction.values[0] == "value10":
+        await interaction.send('type: examples')
+    else:
+        await interaction.respond(type=6)
     
 
 #Rami's Code for remind
@@ -621,6 +627,7 @@ async def on_message(message):
             completed.pop(i)
         
         await message.channel.send("OK all your tasks have been cleared 🙂")
+        important_tasks.clear()             # NEW
 
 #***********************************************************************************************************************
     elif message.content.startswith('change mood'):
