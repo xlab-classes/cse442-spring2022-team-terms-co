@@ -839,4 +839,4 @@ async def on_message(message):
 keep_alive.keep_alive()
 
 if __name__ == '__main__':
-    bot.run('OTQ1ODQxNjU3MTkzMDQxOTcw.YhWBrw.wQoyO-1_DOVN2XJneQ-M8FbpDvQ')
+    bot.run()
