@@ -8,7 +8,9 @@ def help_command_message():     # NEW
         "\n:bulb: " + "you can change the mood by typing \"**change mood**\"\n" +
         "\n:bulb: " + "if you have a task marked as important and you want to remove that tag, simply type \"**mark task task_ID as not important**\"\n" +
         "\n:bulb: " + "you can see examples of the commands I support by typing \"**examples**\"\n" +
-        "\n:bulb: " + "to see the commands I support, type \"**/commands**\"\n")
+        "\n:bulb: " + "to see the commands I support, type \"**/commands**\"\n" +
+        "\n:bulb: " + "Type start! to create a default toDos channel to schedule your tasks\n" +
+        "\n:bulb: " + "Type start {channelName} without the {} and the channel name as one word to create a custom channel\n")
     return bot_help_msg
 
 def examples_command_message():
