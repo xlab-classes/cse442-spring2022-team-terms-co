@@ -11,6 +11,7 @@ from time_manager import process_input_time
 from time_manager import time_to_military
 import quotes
 import config
+import json
 from user_message_manager import help_command_message, examples_command_message, tips_command_message, important_task_message, not_important_task_message, view_important_tasks, bot_greeting_msg, edit_important_tasks
 
 intents = discord.Intents.default()
@@ -543,12 +544,45 @@ def add_task_time(message):
     return embed
     # return replies[random.randrange(len(replies))] + ". The task ID(time) is " + str(taskID)  
 
+#Puts the contents of the dictionary into the json file
+def update_json():
+
+    #Reading in these files serves no purpose im just keeping it here in case we need an example of how to access them
+    filename = 'user_data.json'
+    with open(filename, "r") as file:
+        user_json_data = json.load(file)
+    with open("completed_data.json" , "r") as complete_file:
+        completed_json_data = json.load(complete_file)
+    with open("overdue_data.json", "r") as overdue_file:
+        overdue_json_data = json.load(overdue_file)
+
+    if len(user_dict)>0:
+        user_json_data= user_dict
+        with open(filename, "w") as file:
+            json.dump(user_json_data, file)
+
+    if len(user_dict_completed) > 0:
+            completed_json_data= user_dict_completed
+            with open("completed_data.json", "w") as file:
+                json.dump(completed_json_data, file)
+
+    if len(user_dict_overdue) > 0:
+            overdue_json_data= user_dict_overdue
+            with open("overdue_data.json", "w") as file:
+                json.dump(completed_json_data, file)
+    print("Json Files updated")
+
+
 
 @bot.event
 async def on_message(message):
+    update_json()
     if message.author == bot.user:
         return
     
+
+  
+
     usr_important_message = message.content.split() # parsing user's message for makring tasks as important
 
     #Add task
@@ -557,6 +591,7 @@ async def on_message(message):
     channelRegexCheck = re.match('[S-s]tart \w*$', message.content)
     if bool(regexCheck) and remindMeCheck:
         bot_message = add_task(message)
+        
         await message.channel.send(embed = bot_message)
         return
     elif message.content.startswith('Start') or message.content.startswith('start') :
