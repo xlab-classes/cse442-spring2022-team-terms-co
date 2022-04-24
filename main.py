@@ -496,6 +496,8 @@ def add_task(message):
         title =replies[random.randrange(len(replies))] + ". The task ID is " + str(taskID),
         color =0xeb34c9
         )   
+        update_json()
+
         return embed
         # return replies[random.randrange(len(replies))] + ". The task ID is " + str(taskID)
     else:
@@ -569,14 +571,13 @@ def update_json():
     if len(user_dict_overdue) > 0:
             overdue_json_data= user_dict_overdue
             with open("overdue_data.json", "w") as file:
-                json.dump(completed_json_data, file)
+                json.dump(overdue_json_data, file)
     print("Json Files updated")
 
 
 
 @bot.event
 async def on_message(message):
-    update_json()
     if message.author == bot.user:
         return
     
@@ -599,6 +600,7 @@ async def on_message(message):
       if message.content == 'start!' or message.content == 'Start!':
         channel = await message.guild.create_text_channel('toDos')
         await message.channel.send("New defualt channel: 'todos' to schedule your tasks has been created!")
+
         return
       elif bool(channelRegexCheck):
         print("btuh")
@@ -624,21 +626,25 @@ async def on_message(message):
             await message.channel.send(embed = embed)
             return
         else:
+            update_json()
             await message.channel.send( embed = bot_message)
     
     #Delete task
     elif message.content.startswith('delete '):
         bot_message = delete_task(message)
+        update_json()
         await message.channel.send(embed = bot_message)
         return
     #Completed task
     elif message.content.startswith('completed '):
         bot_message = complete_task(message)
+        update_json()
         await message.channel.send(embed= bot_message)
         return
     #view task:
     elif message.content.startswith('userview'):
         bot_message = userview_task(message)
+
         await message.channel.send(embed= bot_message)
         return 
     elif message.content.startswith('view'):
@@ -661,7 +667,8 @@ async def on_message(message):
             del user_dict_completed[i]
         for i in completed_ids:
             completed.pop(i)
-        
+
+        update_json()
         await message.channel.send("OK all your tasks have been cleared 🙂")
         important_tasks.clear()             # NEW
 
@@ -793,6 +800,7 @@ async def on_message(message):
                 return
         if debug: print('After:')  # debug = just to show the task has been edited
         if debug: print(toDos)  # debug - just to show the task has been edited
+        update_json()
         await message.channel.send('your task has been edited   🙂')
     # -----------------------------------------------------------------------------------------------------------
 
