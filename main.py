@@ -115,7 +115,17 @@ def add_to_overdue(msg, taskID):
 def delete(id):
     scheduler.remove_job(id)
     scheduler.print_jobs()
- 
+
+#login
+    # elif message.content.startswith('login'):
+    #   login_title = "Hey, " + message.author.name
+    #   embedVar = discord.Embed(
+    #     title = login_title,
+    #     color =0x7214E3
+    #   )
+    #   embedVar.add_field(name="Use the link below to use our online scheduler! ", value="[Click this!](https://www-student.cse.buffalo.edu/CSE442-542/2022-Spring/cse-442s/cse442-spring2022-team-terms-co/static/)")
+    #   await message.channel.send(embed=embedVar)
+
 @bot.event
 async def on_ready():
     DiscordComponents(bot)  # new
@@ -596,6 +606,11 @@ async def on_message(message):
         bot_message = delete_task(message)
         await message.channel.send(embed = bot_message)
         return
+    #Login task    
+    elif message.content.startswith('login'):
+        bot_message = login(message)
+        await message.channel.send(embed = bot_message)
+        return    
     #Completed task
     elif message.content.startswith('completed '):
         bot_message = complete_task(message)
