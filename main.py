@@ -607,10 +607,10 @@ async def on_message(message):
         await message.channel.send(embed = bot_message)
         return
     #Login task    
-    elif message.content.startswith('login'):
-        bot_message = login(message)
-        await message.channel.send(embed = bot_message)
-        return    
+    # elif message.content.startswith('login'):
+    #     bot_message = login(message)
+    #     await message.channel.send(embed = bot_message)
+    #     return    
     #Completed task
     elif message.content.startswith('completed '):
         bot_message = complete_task(message)
