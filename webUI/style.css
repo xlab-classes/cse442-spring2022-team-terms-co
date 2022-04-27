@@ -5,6 +5,7 @@
 
 body {
 	color: black;
+  background-image: url("wallpaper_dark.png");
 	font-family: 'Poppins', sans-serif;
 	font-size: 16px;
 	max-width: 1920px;
@@ -13,6 +14,10 @@ body {
 
 	background-size:contain;
 	font-family: 'Source Sans Pro', sans-serif;
+}
+
+a{
+  color: pink;
 }
 
 .addbotButton{
@@ -26,7 +31,6 @@ header {
 	top: 50%;
 	left: 50%;
 	transform: translate(-50%, -50%);
-	color: white;
 	text-align: center;
 }
 
@@ -145,10 +149,7 @@ p {
 	max-height: 100vh;
 	margin: auto;
 }
-body{
-    margin-top:20px;
-    background: #f8f8f8;
-}
+
 
 .todo-nav {
     margin-top: 10px
@@ -162,7 +163,7 @@ body{
     padding: 15px;
     margin: 5px 0;
     border-radius: 0;
-    background: #f7f7f7
+    background: #878787
 }
 
 .todo-list.only-active .todo-item.complete {
@@ -242,7 +243,6 @@ div.button, div.checker, div.radio, div.selector, div.uploader {
     padding: 25px;
     margin-bottom: 20px;
     border: initial;
-    background: #fff;
     border-radius: calc(.15rem - 1px);
     box-shadow: 0 1px 15px rgba(0,0,0,0.04), 0 1px 6px rgba(0,0,0,0.04);
 }
