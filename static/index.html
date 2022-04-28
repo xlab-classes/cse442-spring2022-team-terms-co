@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html class="no-js" lang="en">
 
 <head>
@@ -42,10 +42,13 @@
       </div>
     </div>
 
+    
   </section>
   <!-- Task Bot Home end -->
 
   <br>
+
+  
 
   <!--about Start-->
   <section id="about" class="about">
@@ -53,6 +56,8 @@
       <div class="row" style="height: max-content;">
         <div class="column left">
           <div class="title">
+
+    
             <h2>
               About Our toDoBot
             </h2>
@@ -133,6 +138,40 @@
                 ->> type "tips" to see useful tips to use the bot  <br>
                 ->> type "examples" to see some examples of using the bot <br>
             </p>
+
+         
+            <h5> "Data stored by the bot in todos"</h5>
+            <div id="user_entries"></div>
+            <script>
+                console.log("ENTERED THE SCRIPT")
+                //https://howtocreateapps.com/fetch-and-display-json-html-javascript/
+                fetch('../user_data.json')
+                    .then(function (response) {
+                        return response.json();
+                    })
+                    .then(function (data) {
+                        readJSON(data);
+                    })
+                    .catch(function (err) {
+                        console.log('error: ' + err);
+                    });
+                function readJSON(data) {
+                    var mainContainer = document.getElementById("user_entries");
+                    console.log("Entered append data");
+                    console.log("DATA: " + data)
+                    console.log("Entries: " + Object.entries(data))
+                    
+                    for (let [key, value] of Object.entries(data)) {
+                        console.log(key);
+                        console.log(Object.entries(value))
+                        var div = document.createElement("div");
+                        div.innerHTML = 'Key: ' + key + " Values: " + Object.entries(value)
+                        mainContainer.appendChild(div);
+                        
+                    }
+                }
+            </script>
+        
           </div>
         </div>
       </div>
