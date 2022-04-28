@@ -1,4 +1,5 @@
 from distutils.command.config import config
+from turtle import update
 import keep_alive
 import random
 import re
@@ -11,6 +12,7 @@ from time_manager import process_input_time
 from time_manager import time_to_military
 import quotes
 import config
+import json
 from user_message_manager import help_command_message, examples_command_message, tips_command_message, important_task_message, not_important_task_message, view_important_tasks, bot_greeting_msg, edit_important_tasks
 
 intents = discord.Intents.default()
@@ -543,6 +545,38 @@ def add_task_time(message):
     return embed
     # return replies[random.randrange(len(replies))] + ". The task ID(time) is " + str(taskID)  
 
+#Puts the contents of the dictionary into the json file
+def update_json():
+
+    #Reading in these files serves no purpose im just keeping it here in case we need an example of how to access them
+    filename = 'user_data.json'
+    with open(filename, "r") as file:
+        user_json_data = json.load(file)
+    with open("completed_data.json" , "r") as complete_file:
+        completed_json_data = json.load(complete_file)
+    with open("overdue_data.json", "r") as overdue_file:
+        overdue_json_data = json.load(overdue_file)
+
+    if len(user_dict)>0:
+        user_json_data= user_dict
+        with open(filename, "w") as file:
+            json.dump(user_json_data, file)
+
+    if len(user_dict_completed) > 0:
+            completed_json_data= user_dict_completed
+            with open("completed_data.json", "w") as file:
+                json.dump(completed_json_data, file)
+
+    if len(user_dict_overdue) > 0:
+            overdue_json_data= user_dict_overdue
+            with open("overdue_data.json", "w") as file:
+                json.dump(overdue_json_data, file)
+    print("Json Files updated")
+
+#Todo a function that updates the changes made on the webapp before running a message sent to the bot
+def refresh_json():
+    return
+
 
 @bot.event
 async def on_message(message):
@@ -557,6 +591,7 @@ async def on_message(message):
     channelRegexCheck = re.match('[S-s]tart \w*$', message.content)
     if bool(regexCheck) and remindMeCheck:
         bot_message = add_task(message)
+        update_json()
         await message.channel.send(embed = bot_message)
         return
     elif message.content.startswith('Start') or message.content.startswith('start') :
@@ -589,16 +624,19 @@ async def on_message(message):
             await message.channel.send(embed = embed)
             return
         else:
+            update_json()
             await message.channel.send( embed = bot_message)
     
     #Delete task
     elif message.content.startswith('delete '):
         bot_message = delete_task(message)
+        update_json()
         await message.channel.send(embed = bot_message)
         return
     #Completed task
     elif message.content.startswith('completed '):
         bot_message = complete_task(message)
+        update_json()
         await message.channel.send(embed= bot_message)
         return
     #view task:
@@ -626,7 +664,8 @@ async def on_message(message):
             del user_dict_completed[i]
         for i in completed_ids:
             completed.pop(i)
-        
+
+        update_json()
         await message.channel.send("OK all your tasks have been cleared 🙂")
         important_tasks.clear()             # NEW
 
@@ -758,6 +797,7 @@ async def on_message(message):
                 return
         if debug: print('After:')  # debug = just to show the task has been edited
         if debug: print(toDos)  # debug - just to show the task has been edited
+        update_json()
         await message.channel.send('your task has been edited   🙂')
     # -----------------------------------------------------------------------------------------------------------
 
