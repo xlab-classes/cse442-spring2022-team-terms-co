@@ -19,15 +19,13 @@ intents = discord.Intents.default()
 intents.members = True
 bot = commands.Bot(command_prefix='/')      # new
 
-#Read the private key from a local file
+# Read the private key from a local file
 toDos = {0: 0, -1: ''}
 completed = {}
 
 user_dict = {}
 user_dict_completed = {}
 user_dict_overdue ={}
-#toDos =  { taskID: (task_details, tim_e) }
-#completed =  { taskID: (task_details, tim_e) }
 
 important_tasks = {}  # important_tasks = {taskID : "task_details + time" }
 
@@ -93,7 +91,7 @@ async def send_embed_message(msg, task_details, task_time):
         color=0xEABBC2)
     await msg.channel.send(embed=embed)
 
-#Removes a task from in progress and adds it to overdue
+# Removes a task from in progress and adds it to overdue
 def add_to_overdue(msg, taskID):
     if msg.author.id not in user_dict:
         return "Author has no Dictionary"
@@ -113,7 +111,8 @@ def add_to_overdue(msg, taskID):
         user_dict_overdue[msg.author.id][taskID] = overdue_task
         print("Overdue Dict : " , user_dict_overdue) 
     return "Added to overdue"
-#call it in delete and clear all
+
+# Call it in delete and clear all
 def delete(id):
     scheduler.remove_job(id)
     scheduler.print_jobs()
@@ -152,6 +151,7 @@ async def commands(ctx):  # new
                                      value="value9"),
                         SelectOption(label="see examples of the commands", description='type: examples',
                                      value="value10")
+                        SelectOption(label="Login to our web app", description="type: login", value="value11"),
                     ])])
 
 
@@ -179,11 +179,13 @@ async def on_select_option(interaction):  # new
         await interaction.send('type: list important tasks')
     elif interaction.values[0] == "value10":
         await interaction.send('type: examples')
+    elif interaction.values[0] == "value11":
+        await interaction.send('type: login')
     else:
         await interaction.respond(type=6)
     
 
-#Rami's Code for remind
+# Remind
 def schedule_job(message , message_time, taskID):
     user_time = process_input_time(message_time)
     military_time = time_to_military(user_time)
@@ -193,7 +195,7 @@ def schedule_job(message , message_time, taskID):
     scheduler.add_job(func, CronTrigger(hour=time_hrs, minute=time_mins, second="0"),(message, task_details, military_time, taskID,), id=str(taskID), replace_existing=True)
     return
 
-#Deletes a task and returns the message the bot should send to the user
+# Deletes a task and returns the message the bot should send to the user
 def delete_task(message):
     split_index = 7
     to_del = message.content[split_index:]
@@ -233,7 +235,8 @@ def delete_task(message):
         color =0xeb34c9
         )   
         return embed 
-#Places a task from the base dictionary into the completed dictionary
+
+# Places a task from the base dictionary into the completed dictionary
 def complete_task(message):
     id_idx = message.content.find(' task')
     if id_idx == -1:
@@ -351,7 +354,7 @@ def userview_task(message):
     print("Completed IDS: " , completed_ids)
     print("Overdue IDs " , overdue_ids)
 
-    #Get rid of incomplete tasks 
+    # Get rid of incomplete tasks 
     if -1 in ids:
         ids.remove(-1)
 
@@ -460,8 +463,8 @@ def view_task(message):
     )
     return embed
 
-#Add a task using the remind me to keywords
-#Put tasks into the -1 key if they do not include a time 
+# Add a task using the remind me to keywords
+# Put tasks into the -1 key if they do not include a time 
 def add_task(message):
     if ' at' in message.content:
         split_index = message.content.find(' at')
@@ -483,7 +486,7 @@ def add_task(message):
         toDos[0] = taskID
         toDos[-1] = message.content[12:split_index]
         toDos[taskID] = task
-        #Mikes Addition $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
         if message.author.id not in user_dict:
             user_dict[message.author.id] = {}
             user_dict[message.author.id][taskID]  = task
@@ -491,7 +494,7 @@ def add_task(message):
         else:
             user_dict[message.author.id][taskID] = task
             print("Added to user dict: " , user_dict)
-        # Rami's Addition Schedule the job
+
         schedule_job(message, tim_e, taskID)
         embed = discord.Embed(
         title =replies[random.randrange(len(replies))] + ". The task ID is " + str(taskID),
@@ -503,7 +506,7 @@ def add_task(message):
         split_index = message.content.find(' to')
         task = message.content[split_index + 3:].strip()
 
-        #If the time is not added store task in a tuple at key -1 
+        # If the time is not added store task in a tuple at key -1 
         if message.author.id not in user_dict:
             user_dict[message.author.id] = {}
             user_dict[message.author.id][-1]  = task
@@ -522,7 +525,7 @@ def add_task(message):
 
 #TODO When a time is sent check to see if is associated with a previous task
 def add_task_time(message):
-    #increment task ID for the after part of at case
+    # Increment task ID for the after part of at case
     taskID = toDos[0] + 1
     toDos[0] = taskID
     print(taskID, " task ID")
@@ -545,10 +548,10 @@ def add_task_time(message):
     return embed
     # return replies[random.randrange(len(replies))] + ". The task ID(time) is " + str(taskID)  
 
-#Puts the contents of the dictionary into the json file
+# Puts the contents of the dictionary into the json file
 def update_json():
 
-    #Reading in these files serves no purpose im just keeping it here in case we need an example of how to access them
+    # Reading in these files serves no purpose im just keeping it here in case we need an example of how to access them
     filename = 'user_data.json'
     with open(filename, "r") as file:
         user_json_data = json.load(file)
@@ -573,7 +576,7 @@ def update_json():
                 json.dump(overdue_json_data, file)
     print("Json Files updated")
 
-#Todo a function that updates the changes made on the webapp before running a message sent to the bot
+#TODO a function that updates the changes made on the webapp before running a message sent to the bot
 def refresh_json():
     return
 
@@ -585,7 +588,7 @@ async def on_message(message):
     
     usr_important_message = message.content.split() # parsing user's message for makring tasks as important
 
-    #Add task
+    # Add task
     regexCheck = re.match(".*(?![remind me to]).+", message.content)
     remindMeCheck = re.match("(.*(?=[R-r]emind me to).*)", message.content)
     channelRegexCheck = re.match('[S-s]tart \w*$', message.content)
@@ -612,7 +615,7 @@ async def on_message(message):
         return
         
 
-    #Add task if the time was not previously sent
+    # Add task if the time was not previously sent
     elif bool(re.match("^[0-9].*[AM|am|PM|pm]+", message.content)):
         bot_message= add_task_time(message)
         if bot_message == 1:
@@ -627,7 +630,20 @@ async def on_message(message):
             update_json()
             await message.channel.send( embed = bot_message)
     
-    #Delete task
+    # Login to web app
+    elif message.content.lower().startswith('login'):
+      login_title = "Hey, " + message.author.name
+      embedVar = discord.Embed(
+        title = login_title,
+        color =0x7214E3
+      )
+      link = "[Click here!](https://www-student.cse.buffalo.edu/CSE442-542/2022-Spring/cse-442s/cse442-spring2022-team-terms-co/webUI?username=" + str(message.author.name) + "&userid=" + str(message.author.id) + ")"
+      # print(link)
+      embedVar.add_field(name="Use the link below to use our online scheduler! ", value=link)
+      await message.channel.send(embed=embedVar)
+      return
+
+    # Delete task
     elif message.content.startswith('delete '):
         bot_message = delete_task(message)
         update_json()
@@ -639,7 +655,7 @@ async def on_message(message):
         update_json()
         await message.channel.send(embed= bot_message)
         return
-    #view task:
+    # View task:
     elif message.content.startswith('userview'):
         bot_message = userview_task(message)
         await message.channel.send(embed= bot_message)
@@ -647,7 +663,7 @@ async def on_message(message):
     elif message.content.startswith('view'):
         bot_message = userview_task(message)
         await message.channel.send(embed=bot_message)
-    #clear all 
+    # Clear all 
     elif message.content.startswith('clear all tasks') or message.content.startswith('clear'):
         ids = list(toDos)
         completed_ids = list(completed)
@@ -667,9 +683,8 @@ async def on_message(message):
 
         update_json()
         await message.channel.send("OK all your tasks have been cleared 🙂")
-        important_tasks.clear()             # NEW
+        important_tasks.clear() 
 
-#***********************************************************************************************************************
     elif message.content.startswith('change mood'):
         if   '🙂' in message.content:            
             await message.channel.send("mood changed to normal")
@@ -712,8 +727,8 @@ async def on_message(message):
         description = quote,
             color =0xBBA14F )
         await message.channel.send(embed=embed)   
-# Rami's code:-----------------------------------------------------------------------------------------------
-    # task: edit
+
+    # Edit task
     elif message.content.startswith('edit'):
         debug = False  # if debugging, make True
         if debug: print('Before:')  # debug
@@ -766,6 +781,7 @@ async def on_message(message):
                         edited_entry = (new_task, time)
                         toDos[task_ID] = edited_entry  # new entry is entered as a tuple
                         user_dict[message.author.id][task_ID] = edited_entry
+        
         # reminder addition: -------------------------------------------------------------------------------------------    
                         user_time = process_input_time(time)
 
@@ -779,8 +795,7 @@ async def on_message(message):
                         scheduler.add_job(func, CronTrigger(hour=time_hrs, minute=time_mins, second="0"),
                                           (message, new_task, military_time,), id=str(task_ID))  # old
         # --------------------------------------------------------------------------------------------------------------
-
-                      
+            
                     else:
                         await message.channel.send('Your edit message is not formatted correctly.' +
                                                    '\nYou are probably missing an "at" before your task time.' +
@@ -799,10 +814,10 @@ async def on_message(message):
         if debug: print(toDos)  # debug - just to show the task has been edited
         update_json()
         await message.channel.send('your task has been edited   🙂')
+    
     # -----------------------------------------------------------------------------------------------------------
 
-    # Rami's code:******************************************************************************************************
-    # task: help
+    # Help
     elif message.content.lower().startswith('help'):
         embed = discord.Embed(
             title="Help",
@@ -810,10 +825,8 @@ async def on_message(message):
             color=0xFF5733)
         await message.add_reaction("👍🏾")
         await message.channel.send(embed=embed)
-    # ***
 
-    # Rami's code:******************************************************************************************************
-    # task: example
+    # Example
     elif message.content.lower().startswith('examples') or message.content.lower().startswith('example'):
         embed = discord.Embed(
         title="Examples of Commands I support",
@@ -821,10 +834,10 @@ async def on_message(message):
         color=0x6A5ACD)
         await message.add_reaction("👍🏾")
         await message.channel.send(embed=embed)
+    
     # ******************************************************************************************************************
 
-    # Rami's code:******************************************************************************************************
-    # task: tips        # user story: make the bot more user-friendly
+    # Tips        # user story: make the bot more user-friendly
     elif message.content.lower().startswith('tips'):
         embed = discord.Embed(
         title="Tips",
@@ -832,10 +845,10 @@ async def on_message(message):
         color=0x6A5ACD)
         await message.add_reaction("👍🏾")
         await message.channel.send(embed=embed)
+    
     # ******************************************************************************************************************
 
-    # ******************************************************************************************************************
-    # task: Replying to greetings        # user story: make the bot more user-friendly
+    # Replying to greetings        # user story: make the bot more user-friendly
     elif (message.content.lower().startswith('hey') or
           message.content.lower().startswith('hi') or
           message.content.lower().startswith('hello')):
@@ -844,16 +857,15 @@ async def on_message(message):
         await message.channel.send(bot_greeting_msg())
     # ******************************************************************************************************************
 
-    # ******************************************************************************************************************
-    # Task: Important
+    # Mark Important
     elif (message.content.lower().startswith('mark task') and
           usr_important_message[3].lower() == 'as' and
           usr_important_message[4].lower() == 'important'):
 
         await message.channel.send(important_task_message(message.content, 2, user_dict[message.author.id], important_tasks))
-    # ******************************************************************************************************************
 
     # ******************************************************************************************************************
+
     # Task: Marking an important task as not important. If the task is not marked as important, then it will not be
     # affected. Assume the correct user message format is: "mark task task_ID as not important"
     elif (message.content.lower().startswith('mark task') and
@@ -862,16 +874,17 @@ async def on_message(message):
           usr_important_message[5].lower() == 'important'):
 
           await message.channel.send(not_important_task_message(message.content, 2, important_tasks))
+    
     # ******************************************************************************************************************
-
-    # ******************************************************************************************************************
-    # Task: Viewing all Important tasks.
+    
+    # Viewing all Important tasks.
     elif (message.content.lower().startswith('list important tasks')):
         embed = discord.Embed(
             title="Important Tasks",
             description=view_important_tasks(important_tasks),
             color=0xFF0000) # red
         await message.channel.send(embed=embed)
+    
     # ******************************************************************************************************************
     else:       # new
         await bot.process_commands(message)
