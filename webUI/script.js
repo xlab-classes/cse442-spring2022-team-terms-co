@@ -3,6 +3,10 @@ function redirect(){
   if (paramArray.length < 2){
     window.location.href = './error.html';
   }
+  const params = new URLSearchParams(window.location.search)
+  for (const param of params){
+      console.log(param)
+  }
 }
 
 $( document ).ready(function() {
