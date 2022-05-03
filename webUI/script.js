@@ -4,9 +4,13 @@ function redirect(){
     window.location.href = './error.html';
   }
   const params = new URLSearchParams(window.location.search)
+  console.log("Testing query parameters: ")
   for (const param of params){
       console.log(param)
   }
+  username = params.get('username');
+  document.getElementById('uname').innerHTML = username;
+  userid = params.get('userid');
 }
 
 $( document ).ready(function() {
