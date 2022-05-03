@@ -1,3 +1,10 @@
+function redirect(){
+  var paramArray = window.location.search.substring(1).split("&");
+  if (paramArray.length < 2){
+    window.location.href = './error.html';
+  }
+}
+
 $( document ).ready(function() {
     
     "use strict";
