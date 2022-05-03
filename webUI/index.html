@@ -11,24 +11,39 @@
 <script src="/script.js"></script>
 <body>
   <div>
+    
   <ul class="navbar">
+    
   <li><a href="#name">Name</a></li>
   <li><a href="#addTask">Add Task</a></li>
+    <h2 style="padding: 10px;text-align: center;position: initial;margin: 0px;">TaskBot</h2>
   </ul>
+  </div>
+  <div id="addTask" class="overlay">
+	<div class="popup">
+		<h2>Add a task</h2>
+		<a class="close" href="#">&times;</a>
+    <form action="javascript:void(0);">
+     <input type="text" class="form-control add-task" placeholder="New Task...">
+      <input type="text" class="form-control add-task1" placeholder="at time(HH:MM am/pm)">
+      <button class="submit-btn">Add</button>
+    </form>
 </div>
+</div>
+
 <div class="container">
     <div class="row">
         <div class="col-md-12">
             <div class="card card-white">
-                <div class="card-body">
-                    <form action="javascript:void(0);">
-                        <input type="text" class="form-control add-task" placeholder="New Task..."><button class="submit-btn">Add</button>
-                    </form>
-                    <ul class="nav nav-pills todo-nav">
+              <ul class="nav nav-pills todo-nav" style="float: right;position: fixed;">
                         <li role="presentation" class="nav-item all-task active"><a href="#" class="nav-link">All</a></li>
                         <li role="presentation" class="nav-item active-task"><a href="#" class="nav-link">Active</a></li>
                         <li role="presentation" class="nav-item completed-task" id="completed_tasks"><a href="#" class="nav-link">Completed</a></li>
                     </ul>
+              <h2 id="section"> Active: </h2>
+                <div class="card-body">
+                    
+
                     <div class="todo-list">
                     </div>
                 </div>
