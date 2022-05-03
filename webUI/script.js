@@ -1,3 +1,10 @@
+function redirect(){
+  var paramArray = window.location.search.substring(1).split("&");
+  if (paramArray.length < 2){
+    window.location.href = './error.html';
+  }
+}
+
 $( document ).ready(function() {
     
     "use strict";
@@ -50,7 +57,7 @@ $( document ).ready(function() {
     $(".submit-btn").click(function (e) {
       console.log(e.which)
         if ((!$(".add-task").val().length == 0)) {
-            $('<div class="todo-item"><div class="checker"><span class=""><input type="checkbox"></span></div> <span>' + $(".add-task").val() + '</span> <a href="javascript:void(0);" class="float-right remove-todo-item"><i class="icon-close"></i></a></div>').appendTo('.todo-list');
+            $('<div class="todo-item"><div class="checker"><span class="checked"><input type="checkbox" id="chk"></span></div> <span>' + $(".add-task").val() + ' @' + $(".add-task1").val() + '</span> <a href="javascript:void(0);" class="float-right remove-todo-item"><i class="icon-close"></i></a></div>').appendTo('.todo-list');
             $(".add-task").val('');
         } else if(e.which == 1) {
             alert('Please enter new task');
@@ -66,4 +73,11 @@ $( document ).ready(function() {
             $(".add-task").parent().remove();
         });
     });
+  
+  $(".todo-list .todo-item").click(function() {
+    $("#cmplt").append('<li><a href="#">'+$(this).text()+'</a></li>');
+    $("#completed").css("display", "block");
+    alert('Completed ' + $(this).text());
+    $(this).remove();
+  });
 });
