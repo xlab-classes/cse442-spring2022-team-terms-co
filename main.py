@@ -112,6 +112,7 @@ def add_to_overdue(msg, taskID):
     else:
         user_dict_overdue[msg.author.id][taskID] = overdue_task
         print("Overdue Dict : " , user_dict_overdue) 
+    update_json()
     return "Added to overdue"
 
 # Call it in delete and clear all
@@ -228,6 +229,7 @@ def delete_task(message):
         title ="Successfully deleted!",
         color =0xeb34c9
         )   
+        update_json()
         return embed        
     elif int(to_del) in user_dict_completed[message.author.id]:
         user_dict_completed[message.author.id].pop(int(to_del.strip()))
@@ -236,6 +238,7 @@ def delete_task(message):
         title ="Successfully deleted!",
         color =0xeb34c9
         )   
+        update_json()
         return embed 
 
 # Places a task from the base dictionary into the completed dictionary
@@ -296,6 +299,7 @@ def complete_task(message):
             title ="Congrats on completing your task!",
             color =0x4e03fc
             )    
+            update_json()
             return embed      
         else:
             user_dict_completed[message.author.id][message_id]  = user_dict[message.author.id][message_id]
@@ -305,6 +309,7 @@ def complete_task(message):
             title ="Task marked as completed",
             color =0x4e03fc
             )    
+            update_json()
             return embed        
     if message_id in user_dict_overdue[message.author.id]:
         if message.author.id not in user_dict_completed:
@@ -317,6 +322,7 @@ def complete_task(message):
             title ="Congrats on completing your task!",
             color =0x4e03fc
             )    
+            update_json()
             return embed      
         else:
             user_dict_completed[message.author.id][message_id]  = user_dict_overdue[message.author.id][message_id]
@@ -326,6 +332,7 @@ def complete_task(message):
             title ="Task marked as completed",
             color =0x4e03fc
             )    
+            update_json()
             return embed        
     return discord.Embed(title ="No task with this ID exists for your account",color =0x4e03fc)    
 
@@ -354,9 +361,9 @@ def userview_task(message):
             overdue_ids = (list(user_dict_overdue[message.author.id]))
         
   
-    print("IDS: " , ids)
-    print("Completed IDS: " , completed_ids)
-    print("Overdue IDs " , overdue_ids)
+    #print("IDS: " , ids)
+    #print("Completed IDS: " , completed_ids)
+    #print("Overdue IDs " , overdue_ids)
 
     # Get rid of incomplete tasks 
     if -1 in ids:
@@ -491,6 +498,7 @@ def add_task(message):
         toDos[-1] = message.content[12:split_index]
         toDos[taskID] = task
 
+
         if message.author.id not in user_dict:
             user_dict[message.author.id] = {}
             user_dict[message.author.id][taskID]  = task
@@ -558,17 +566,10 @@ def add_task_time(message):
 def update_json():
 
     # Reading in these files serves no purpose im just keeping it here in case we need an example of how to access them
-    '''
-    with open(filename, "r") as file:
-        user_json_data = json.load(file)
-    with open("completed_data.json" , "r") as complete_file:
-        completed_json_data = json.load(complete_file)
-    with open("overdue_data.json", "r") as overdue_file:
-        overdue_json_data = json.load(overdue_file)
-    '''
+  
 
     filename = 'user_data.json'
-    print("Update JSON dict: " , user_dict)
+    #print("Update JSON dict: " , user_dict)
     if len(user_dict)>0:
         user_json_data= user_dict
         with open(filename, "w") as file:
@@ -583,13 +584,13 @@ def update_json():
             overdue_json_data= user_dict_overdue
             with open("overdue_data.json", "w") as file:
                 json.dump(overdue_json_data, file)
-    print("Json Files updated")
+    #print("Json Files updated")
 
 #Enters the json and grabs the dictionary there
 def load_dict(filename):
     with open(filename) as dict:
             dictionary = json.load(dict)
-            print("Dict: " ,dictionary)
+            #print("Dict: " ,dictionary)
     return dictionary
 
 
@@ -603,10 +604,10 @@ def refresh_json():
     global user_dict_overdue
     #global user_dict_overdue
 
-    print("Before refresh: " , user_dict)
+    #print("Before refresh: " , user_dict)
     #This is the user dictionary with strings
     user_dict_strings = dict(load_dict('user_data.json'))
-    print("user_dict_strings " , user_dict_strings )
+    #print("user_dict_strings " , user_dict_strings )
     completed_dict_strings = dict(load_dict('completed_data.json'))
     overdue_dict_strings = dict(load_dict('overdue_data.json'))
 
@@ -637,7 +638,7 @@ def refresh_json():
             user_dict_overdue[int(str_key)][int(str_task_key)] = overdue_dict_strings[str_key][str_task_key]
 
 
-    print("After Refresh" , user_dict , "\n" , user_dict_completed , "\n" , user_dict_overdue)
+    #print("After Refresh" , user_dict , "\n" , user_dict_completed , "\n" , user_dict_overdue)
 
     #print("JSON refreshed")
     return
@@ -647,7 +648,18 @@ def refresh_json():
 async def on_message(message):
     if message.author == bot.user:
         return
-  
+
+    with open('task_id.json' , "r") as json_task:
+            json_task_id = json.load(json_task)
+            #print("Json Task: " , json_task_id)
+            #print("Json task id  " ,json_task_id["task_id"])
+            if json_task_id['task_id'] < toDos[0]:
+                with open('task_id.json' , "w") as json_task_write:
+                    json_task_id['task_id'] = toDos[0]
+                    json.dump(json_task_id, json_task_write)
+            else:
+                toDos[0] = int(json_task_id['task_id'])
+    
     refresh_json()
     usr_important_message = message.content.split() # parsing user's message for makring tasks as important
 
