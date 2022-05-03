@@ -1,5 +1,7 @@
 from distutils.command.config import config
-from turtle import update
+from turtle import st, update
+
+from numpy import empty
 import keep_alive
 import random
 import re
@@ -25,7 +27,7 @@ completed = {}
 
 user_dict = {}
 user_dict_completed = {}
-user_dict_overdue ={}
+user_dict_overdue = {}
 
 important_tasks = {}  # important_tasks = {taskID : "task_details + time" }
 
@@ -150,8 +152,8 @@ async def commands(ctx):  # new
                         SelectOption(label="view your important tasks", description='type: list important tasks',
                                      value="value9"),
                         SelectOption(label="see examples of the commands", description='type: examples',
-                                     value="value10")
-                        SelectOption(label="Login to our web app", description="type: login", value="value11"),
+                                     value="value10"),
+                        SelectOption(label="Login to our web app", description="type: login", value="value11")
                     ])])
 
 
@@ -331,6 +333,8 @@ def complete_task(message):
 
 #TODO Prints out the tasks in completed and todo
 def userview_task(message):
+    global user_dict
+    print("View user_dict: " , user_dict , " type: " , type(user_dict))
     if message.author.id not in user_dict:
         ids = []
     else:
@@ -495,6 +499,7 @@ def add_task(message):
             user_dict[message.author.id][taskID] = task
             print("Added to user dict: " , user_dict)
 
+        update_json()
         schedule_job(message, tim_e, taskID)
         embed = discord.Embed(
         title =replies[random.randrange(len(replies))] + ". The task ID is " + str(taskID),
@@ -515,6 +520,7 @@ def add_task(message):
             user_dict[message.author.id][-1] = task
             print("Added to user dict timeless: " , user_dict)
         
+        update_json()
         toDos[-1] = task
         print("User Dict without time" , user_dict)
         embed = discord.Embed(
@@ -552,14 +558,17 @@ def add_task_time(message):
 def update_json():
 
     # Reading in these files serves no purpose im just keeping it here in case we need an example of how to access them
-    filename = 'user_data.json'
+    '''
     with open(filename, "r") as file:
         user_json_data = json.load(file)
     with open("completed_data.json" , "r") as complete_file:
         completed_json_data = json.load(complete_file)
     with open("overdue_data.json", "r") as overdue_file:
         overdue_json_data = json.load(overdue_file)
+    '''
 
+    filename = 'user_data.json'
+    print("Update JSON dict: " , user_dict)
     if len(user_dict)>0:
         user_json_data= user_dict
         with open(filename, "w") as file:
@@ -576,8 +585,61 @@ def update_json():
                 json.dump(overdue_json_data, file)
     print("Json Files updated")
 
-#TODO a function that updates the changes made on the webapp before running a message sent to the bot
+#Enters the json and grabs the dictionary there
+def load_dict(filename):
+    with open(filename) as dict:
+            dictionary = json.load(dict)
+            print("Dict: " ,dictionary)
+    return dictionary
+
+
+#TODO json must store keys as strings when they should be ints
+#Option 1 refactor all code expecting ints to become strings
+#Option 2 read in the json and manaually make them into ints
 def refresh_json():
+    #Insert any changes made on the webapp
+    global user_dict
+    global user_dict_completed
+    global user_dict_overdue
+    #global user_dict_overdue
+
+    print("Before refresh: " , user_dict)
+    #This is the user dictionary with strings
+    user_dict_strings = dict(load_dict('user_data.json'))
+    print("user_dict_strings " , user_dict_strings )
+    completed_dict_strings = dict(load_dict('completed_data.json'))
+    overdue_dict_strings = dict(load_dict('overdue_data.json'))
+
+
+    user_dict.clear()
+    user_dict_completed.clear()
+    user_dict_overdue.clear()
+
+    #For the user_dict
+    for str_key in user_dict_strings:
+        for str_task_key in user_dict_strings[str_key]:
+            if int(str_key) not in user_dict:
+                user_dict[int(str_key)] ={}
+            user_dict[int(str_key)][int(str_task_key)] = user_dict_strings[str_key][str_task_key]
+
+    #for the completed dict
+    for str_key in completed_dict_strings:
+        for str_task_key in completed_dict_strings[str_key]:
+            if int(str_key) not in user_dict_completed:
+                user_dict_completed[int(str_key)] ={}
+            user_dict_completed[int(str_key)][int(str_task_key)] = completed_dict_strings[str_key][str_task_key]
+    
+    #for the overdue_dict
+    for str_key in overdue_dict_strings:
+        for str_task_key in overdue_dict_strings[str_key]:
+            if int(str_key) not in user_dict_overdue:
+                user_dict_overdue[int(str_key)] ={}
+            user_dict_overdue[int(str_key)][int(str_task_key)] = overdue_dict_strings[str_key][str_task_key]
+
+
+    print("After Refresh" , user_dict , "\n" , user_dict_completed , "\n" , user_dict_overdue)
+
+    #print("JSON refreshed")
     return
 
 
@@ -585,7 +647,8 @@ def refresh_json():
 async def on_message(message):
     if message.author == bot.user:
         return
-    
+  
+    refresh_json()
     usr_important_message = message.content.split() # parsing user's message for makring tasks as important
 
     # Add task
