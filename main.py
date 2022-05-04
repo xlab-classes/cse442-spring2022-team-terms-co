@@ -712,7 +712,7 @@ async def on_message(message):
         title = login_title,
         color =0x7214E3
       )
-      link = "[Click here!](https://www-student.cse.buffalo.edu/CSE442-542/2022-Spring/cse-442s/cse442-spring2022-team-terms-co/webUI?username=" + str(message.author.name) + "&userid=" + str(message.author.id) + ")"
+      link = "[Click here!](https://www-student.cse.buffalo.edu/CSE442-542/2022-Spring/cse-442s/webUI?username=" + str(message.author.name) + "&userid=" + str(message.author.id) + ")"
       # print(link)
       embedVar.add_field(name="Use the link below to use our online scheduler! ", value=link)
       await message.channel.send(embed=embedVar)
