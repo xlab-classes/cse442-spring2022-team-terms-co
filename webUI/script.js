@@ -4,9 +4,9 @@ function redirect(){
     window.location.href = './error.html';
   }
   const params = new URLSearchParams(window.location.search)
-  console.log("Testing query parameters: ")
+//   console.log("Testing query parameters: ")
   for (const param of params){
-      console.log(param)
+//       console.log(param)
       if(param[0] == "username"){
         username = param[1];
       }
@@ -15,6 +15,7 @@ function redirect(){
       }
   }
   document.getElementById('uname').innerHTML = username;
+  console.log("The userid is: "+ userid);
   
 }
 
