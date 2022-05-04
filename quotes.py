@@ -40,7 +40,7 @@ funny = [
         "How can a peanut kill someone? It's not even a person.\n-Trailer Park Boys. Season 8, Episode 7",
         "I guess we've learned that no matter who you are or where you come from, life is a terrible thing.\n-Peter Griffin, Family Guy",
         "What? Gosh, it's not like the internet to go crazy about something small and stupid.\n-Peter Griffin, Family Guy",
-        "I am absolutely paralyzed by decision-making.\n-Chidi Anagonye, 'The Good Place'"
+        "I am absolutely paralyzed by decision-making.\n-Chidi Anagonye, 'The Good Place'",
         "The only thing I'm not good at is modesty, because I'm great at it.\n-Gina Linette, 'Brooklyn Nine-Nine'."
         ]
 
