@@ -7,10 +7,15 @@ function redirect(){
   console.log("Testing query parameters: ")
   for (const param of params){
       console.log(param)
+      if(param[0] == "username"){
+        username = param[1];
+      }
+      if(param[0] == "userid"){
+        userid = params.get('userid');
+      }
   }
-  username = params.get('username');
   document.getElementById('uname').innerHTML = username;
-  userid = params.get('userid');
+  
 }
 
 $( document ).ready(function() {
