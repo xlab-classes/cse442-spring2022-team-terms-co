@@ -360,6 +360,29 @@ div.button, div.checker, div.radio, div.selector, div.uploader {
     vertical-align: middle;
 }
 
+/* NEW */
+.edit-button{
+    position: relative;
+    float:right;
+    background-color: gold;
+    top: -50px;     /* NEW */
+    margin: 10px;
+}
+
+
+#text1, #text2 {
+    position: relative;
+    display: inline-block;
+    top: -50px; /* NEW */
+    right: -1250px;
+    display: list-item;
+    list-style: none;
+}
+
+#edit-p{
+    display: inline-block;
+}
+/* END */
 .card {
     padding: 25px;
     margin-bottom: 20px;
