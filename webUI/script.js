@@ -1,3 +1,7 @@
+// userid & username for access:
+const username = "";
+const userid = "";
+
 function edit_task(new_task) {
 
     // Tag for edited tasks
@@ -52,14 +56,21 @@ function redirect(){
     if (paramArray.length < 2){
         window.location.href = './error.html';
     }
+    
     const params = new URLSearchParams(window.location.search)
     console.log("Testing query parameters: ")
     for (const param of params){
-        console.log(param)
+        console.log(param);
+        if(param[0] == "username"){
+        username = param[1];
+      }
+       if(param[0] == "userid"){
+        userid = param[1];
+      }
     }
-    username = params.get('username');
+    
     document.getElementById('uname').innerHTML = username;
-    userid = params.get('userid');
+    console.log("The userid is: "+ userid);
 }
 
 var completed_flag = false;         // NEW
