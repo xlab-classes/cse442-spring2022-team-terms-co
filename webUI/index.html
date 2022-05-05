@@ -13,6 +13,7 @@
     
   <ul class="navbar">
     
+  
   <li><a href="#name" id="uname">Name</a></li>
   <li><a href="#addTask">Add Task</a></li>
     <h2 style="padding: 10px;text-align: center;position: initial;margin: 0px;">TaskBot</h2>
@@ -29,6 +30,96 @@
     </form>
 </div>
 </div>
+
+<div id="user_data"></div>
+<div id="completed_data"></div>
+<div id="overdue_data"></div>
+
+<script>
+  //Code to display the json
+
+console.log("ENTERED THE SCRIPT")
+        //https://howtocreateapps.com/fetch-and-display-json-html-javascript/
+        fetch('../user_data.json')
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (data) {
+                appendData(data);
+            })
+            .catch(function (err) {
+                console.log('error: ' + err);
+            });
+        function appendData(data) {
+            var mainContainer = document.getElementById("user_data");
+            console.log("User data: " + Object.entries(data))
+            
+            for (let [key, value] of Object.entries(data)) {
+                console.log(key);
+                console.log(Object.entries(value))
+                var div = document.createElement("div");
+                
+                div.innerHTML = 'Key: ' + key + " Values: " + Object.entries(value)
+                
+                mainContainer.appendChild(div);
+                
+            }
+        }
+
+        fetch('../completed_data.json')
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (data) {
+                appendData(data);
+            })
+            .catch(function (err) {
+                console.log('error: ' + err);
+            });
+        function appendData(data) {
+            var mainContainer = document.getElementById("completed_data");
+
+            console.log("Completed data: " + Object.entries(data))
+            
+            for (let [key, value] of Object.entries(data)) {
+                console.log(key);
+                console.log(Object.entries(value))
+                var div = document.createElement("div");
+                div.innerHTML = 'Key: ' + key + " Values: " + Object.entries(value)
+                mainContainer.appendChild(div);
+                
+            }
+        }
+
+
+        fetch('../overdue_data.json')
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (data) {
+                appendData(data);
+            })
+            .catch(function (err) {
+                console.log('error: ' + err);
+            });
+        function appendData(data) {
+            var mainContainer = document.getElementById("overdue_data");
+
+            console.log("Overdue data: " + Object.entries(data))
+            
+            for (let [key, value] of Object.entries(data)) {
+                console.log(key);
+                console.log(Object.entries(value))
+                var div = document.createElement("div");
+                div.innerHTML = 'Key: ' + key + " Values: " + Object.entries(value)
+                mainContainer.appendChild(div);
+                
+            }
+        }
+
+
+
+</script>
 
 <div class="container">
     <div class="row">
