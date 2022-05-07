@@ -1,0 +1,401 @@
+* {
+    padding: 0;
+    margin: 5;
+}
+
+body {
+    color: black;
+    background-image: url("https://cdn.wallpapersafari.com/48/25/K50kE3.png");      /* NEW */
+    font-family: 'Poppins', sans-serif;
+    font-size: 16px;
+    max-width: 1920px;
+    margin: 0 auto;
+    overflow-x: hidden;
+    background-size: 900px 900px;                   /* NEW */
+    /* background-size:contain;                 I CHANGED THIS TO THE ONE ABOVE */
+    font-family: 'Source Sans Pro', sans-serif;
+}
+
+a{
+    color: pink;
+}
+
+#app {
+    padding: 1rem;
+    background: white;
+    display: flex;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    color: $ color;
+    text-shadow: 0px 0px $ glowSize;
+    font-size: 6rem;
+    flex-direction: column;
+}
+
+.txt {
+    font-size: 1.8rem;
+}
+
+
+@keyframes blink {
+    0%   {opacity: 0}
+    49%  {opacity: 0}
+    50%  {opacity: 1}
+    100% {opacity: 1}
+}
+
+.blink {
+    animation-name: blink;
+    animation-duration: 1s;
+    animation-iteration-count: infinite;
+}
+.overlay:target {
+    visibility: visible;
+    opacity: 1;
+}
+.box {
+    width: 40%;
+    margin: 0 auto;
+    background: rgba(255,255,255,0.2);
+    padding: 35px;
+    border: 2px solid #fff;
+    border-radius: 20px/50px;
+    background-clip: padding-box;
+    text-align: center;
+}
+
+button {
+    font-size: 1em;
+    padding: 10px;
+    color: #fff;
+    border: 2px solid #06D85F;
+    border-radius: 20px/50px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s ease-out;
+}
+.button:hover {
+    background: #06D85F;
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.7);
+    transition: opacity 500ms;
+    visibility: hidden;
+    opacity: 0;
+}
+.popup {
+    margin: 70px auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 5px;
+    width: 30%;
+    position: relative;
+    transition: all 5s ease-in-out;
+}
+
+.popup h2 {
+    margin-top: 0;
+    color: #333;
+    font-family: Tahoma, Arial, sans-serif;
+}
+.popup .close {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    transition: all 200ms;
+    font-size: 30px;
+    font-weight: bold;
+    text-decoration: none;
+    color: #333;
+}
+.popup .close:hover {
+    color: #06D85F;
+}
+.popup .content {
+    max-height: 30%;
+    overflow: auto;
+}
+
+.addbotButton{
+    font-family: monospace;
+    border-radius: 15%;
+    align-content: center;
+}
+.navbar {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+li {
+    float: right;
+}
+
+li a {  /* TARGET */
+    display: block;
+    padding: 8px;
+    background-color: #7b7474;
+}
+header {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+h1 {
+    text-transform: uppercase;
+    margin: 0;
+    font-size: 3rem;
+    white-space: nowrap;
+}
+
+p {
+    margin: 0;
+    font-size: 14px;
+}
+
+.about{
+    padding:75px 0 650px;
+}
+
+.about-content {
+    margin-top: 16px;
+    margin-left: 2%;
+}
+
+.title h2{
+    position:relative;
+    color:#9c884d;
+    text-transform: capitalize;
+    font-size:24px;
+    font-weight:500;
+    padding-bottom:21px;
+}
+.title h2 a:before{
+    position:absolute;
+    content:'';
+    bottom:0;
+    left:0;
+    height:2px;
+    width:40px;
+    background:#ffb901;
+}
+.title p{
+    color:#a7a7a7;
+    font-size:16px;
+    font-weight:300;
+    margin-top: 18px;
+}
+
+.learnMore {
+    padding:90px 0 700px;
+     background-color: #a7a7a7;
+}
+
+.learnMore-content {
+    margin-top:12px;
+    margin-bottom:5px;
+    margin-left: 2%;
+}
+
+.contact {
+    padding:170px 0 350px;
+}
+
+.navbar {
+    overflow: hidden;
+    background-color: #333;
+    position: fixed;
+    top: 0;
+    width: 100%;
+}
+
+.navbar a {
+    float: left;
+    display: block;
+    color: #f2f2f2;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    font-size: 17px;
+}
+
+.navbar a:hover {
+    background: #ddd;
+    color: black;
+}
+
+.column {
+    float: left;
+    padding: 10px;
+}
+
+.left {
+    width: 55%;
+}
+
+.right {
+    padding-top: 5%;
+    width: 40%;
+    align-content: center;
+}
+
+.imgbox {
+    display: grid;
+    height: 100%;
+}
+
+.center-fit {
+    max-width: 100%;
+    max-height: 100vh;
+    margin: auto;
+}
+
+.imgthumbnail {
+    display: grid;
+    max-width: 100%;
+    max-height: 100vh;
+    margin: auto;
+}
+
+
+.todo-nav {
+    float: right;
+    position: fixed;
+    margin: inherit;
+    list-style-type: none;
+
+}
+
+.todo-list {
+    margin: 10px 0
+}
+
+.todo-list .todo-item {
+    padding: 15px;
+    margin: 5px 0;
+    border-radius: 0;
+    background: #878787
+}
+
+.todo-list.only-active .todo-item.complete {
+    display: none
+}
+
+.todo-list.only-active .todo-item:not(.complete) {
+    display: block
+}
+
+.todo-list.only-complete .todo-item:not(.complete) {
+    display: none
+}
+
+.todo-list.only-complete .todo-item.complete {
+    display: block
+}
+
+.todo-list .todo-item.complete span {
+    text-decoration: line-through
+}
+
+.remove-todo-item {
+    color: #ccc;
+    visibility: hidden
+}
+
+.remove-todo-item:hover {
+    color: #5f5f5f
+}
+
+.todo-item:hover .remove-todo-item {
+    visibility: visible
+}
+
+div.checker {
+    width: 18px;
+    height: 18px
+}
+
+div.checker input,
+div.checker span {
+    width: 18px;
+    height: 18px
+}
+
+div.checker span {
+    display: -moz-inline-box;
+    display: inline-block;
+    zoom: 1;
+    text-align: center;
+    background-position: 0 -260px;
+}
+
+div.checker, div.checker input, div.checker span {
+    width: 19px;
+    height: 19px;
+}
+
+div.checker, div.radio, div.uploader {
+    position: relative;
+}
+
+div.button, div.button *, div.checker, div.checker *, div.radio, div.radio *, div.selector, div.selector *, div.uploader, div.uploader * {
+    margin: 0;
+    padding: 0;
+}
+
+div.button, div.checker, div.radio, div.selector, div.uploader {
+    display: -moz-inline-box;
+    display: inline-block;
+    zoom: 1;
+    vertical-align: middle;
+}
+
+
+.card {
+    padding: 25px;
+    margin-bottom: 20px;
+    border: initial;
+    border-radius: calc(.15rem - 1px);
+    box-shadow: 0 1px 15px rgba(0,0,0,0.04), 0 1px 6px rgba(0,0,0,0.04);
+}
+
+#section{
+    color: #cfcfcf;
+    position: relative;
+    padding-top: 30px;
+}
+
+
+/* NEW: displaying tasks */
+
+#user_data {
+    color: blueviolet;
+    margin-top: 50px;
+    font-size: x-large;
+}
+
+#completed_data {
+    color: red;
+    margin-top: 50px;
+    font-size: x-large;
+}
+
+
+#overdue_data {
+    color: green;
+    margin-top: 50px;
+    font-size: x-large;
+}
+
+/* END */
