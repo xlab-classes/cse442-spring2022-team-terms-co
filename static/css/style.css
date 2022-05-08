@@ -6,6 +6,7 @@
 body {
 	color: white;
 	font-family: 'Poppins', sans-serif;
+	background-image: url('./assets/img/wallpaper_dark.png');
 	font-size: 16px;
 	max-width: 1920px;
 	margin: 0 auto;
