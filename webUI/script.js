@@ -1,6 +1,6 @@
 // userid & username for access:
-const username = "";
-const userid = "";
+var username = "";
+var userid = "";
 
 function edit_task(new_task) {
 
