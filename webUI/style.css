@@ -1,0 +1,155 @@
+body {
+    color: white;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    background-image: url('wallpaper_dark.png');
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
+  }
+
+#task_bot {
+    padding: 10px;
+    position: initial;
+    text-align: center;
+    margin: 0px;
+}
+
+.outer {
+    display: table;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+
+  }
+
+  .middle {
+    display: table-cell;
+    vertical-align: middle;
+  }
+
+  .inner {
+    margin-left: auto;
+    margin-right: auto;
+    width: 40%;
+  }
+
+#footer {
+      background-color: #333;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      text-align: center;
+  }
+
+#rcorners1 {
+    border-radius: 25px;
+    background: rgba(115,138,219,0.507);
+    padding: 20px;
+    text-align: left;
+  }
+
+#app {
+    padding: 1rem;
+    background: white;
+    display: flex;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    color: red;
+    font-size: 6rem;
+    flex-direction: column;
+}
+
+.txt {
+    font-size: 1.8rem;
+}
+
+
+@keyframes blink {
+    0%   {opacity: 0}
+    49%  {opacity: 0}
+    50%  {opacity: 1}
+    100% {opacity: 1}
+}
+
+.blink {
+    animation-name: blink;
+    animation-duration: 1s;
+    animation-iteration-count: infinite;
+}
+.overlay:target {
+    visibility: visible;
+    opacity: 1;
+}
+.box {
+    width: 40%;
+    margin: 0 auto;
+    background: rgba(255,255,255,0.2);
+    padding: 35px;
+    border: 2px solid #fff;
+    border-radius: 20px/50px;
+    background-clip: padding-box;
+    text-align: center;
+}
+
+.navbar {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+li {
+    float: right;
+}
+
+li a {  /* TARGET */
+    display: block;
+    padding: 8px;
+    background-color: #7b7474;
+}
+header {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+h1 {
+    text-transform: uppercase;
+    margin: 0;
+    font-size: 3rem;
+    white-space: nowrap;
+}
+
+p {
+    margin: 0;
+    font-size: 14px;
+}
+
+.navbar {
+        overflow: hidden;
+        background-color: #333;
+        position: fixed;
+        top: 0;
+        width: 100%;
+}
+
+
+.navbar a {
+    float: left;
+    display: block;
+    color: #f2f2f2;
+    text-align: left;
+    padding: 14px 16px;
+    text-decoration: none;
+    font-size: 17px;
+}
+
+.navbar a:hover {
+    background: #ddd;
+    color: black;
+}

@@ -1,4 +1,7 @@
 from distutils.command.config import config
+from turtle import st, update
+
+from numpy import empty
 import keep_alive
 import random
 import re
@@ -11,21 +14,20 @@ from time_manager import process_input_time
 from time_manager import time_to_military
 import quotes
 import config
+import json
 from user_message_manager import help_command_message, examples_command_message, tips_command_message, important_task_message, not_important_task_message, view_important_tasks, bot_greeting_msg, edit_important_tasks
 
 intents = discord.Intents.default()
 intents.members = True
 bot = commands.Bot(command_prefix='/')      # new
 
-#Read the private key from a local file
+# Read the private key from a local file
 toDos = {0: 0, -1: ''}
 completed = {}
 
 user_dict = {}
 user_dict_completed = {}
-user_dict_overdue ={}
-#toDos =  { taskID: (task_details, tim_e) }
-#completed =  { taskID: (task_details, tim_e) }
+user_dict_overdue = {}
 
 important_tasks = {}  # important_tasks = {taskID : "task_details + time" }
 
@@ -91,7 +93,7 @@ async def send_embed_message(msg, task_details, task_time):
         color=0xEABBC2)
     await msg.channel.send(embed=embed)
 
-#Removes a task from in progress and adds it to overdue
+# Removes a task from in progress and adds it to overdue
 def add_to_overdue(msg, taskID):
     if msg.author.id not in user_dict:
         return "Author has no Dictionary"
@@ -110,8 +112,10 @@ def add_to_overdue(msg, taskID):
     else:
         user_dict_overdue[msg.author.id][taskID] = overdue_task
         print("Overdue Dict : " , user_dict_overdue) 
+    update_json()
     return "Added to overdue"
-#call it in delete and clear all
+
+# Call it in delete and clear all
 def delete(id):
     scheduler.remove_job(id)
     scheduler.print_jobs()
@@ -149,7 +153,8 @@ async def commands(ctx):  # new
                         SelectOption(label="view your important tasks", description='type: list important tasks',
                                      value="value9"),
                         SelectOption(label="see examples of the commands", description='type: examples',
-                                     value="value10")
+                                     value="value10"),
+                        SelectOption(label="Login to our web app", description="type: login", value="value11")
                     ])])
 
 
@@ -177,11 +182,13 @@ async def on_select_option(interaction):  # new
         await interaction.send('type: list important tasks')
     elif interaction.values[0] == "value10":
         await interaction.send('type: examples')
+    elif interaction.values[0] == "value11":
+        await interaction.send('type: login')
     else:
         await interaction.respond(type=6)
     
 
-#Rami's Code for remind
+# Remind
 def schedule_job(message , message_time, taskID):
     user_time = process_input_time(message_time)
     military_time = time_to_military(user_time)
@@ -191,7 +198,7 @@ def schedule_job(message , message_time, taskID):
     scheduler.add_job(func, CronTrigger(hour=time_hrs, minute=time_mins, second="0"),(message, task_details, military_time, taskID,), id=str(taskID), replace_existing=True)
     return
 
-#Deletes a task and returns the message the bot should send to the user
+# Deletes a task and returns the message the bot should send to the user
 def delete_task(message):
     split_index = 7
     to_del = message.content[split_index:]
@@ -222,6 +229,7 @@ def delete_task(message):
         title ="Successfully deleted!",
         color =0xeb34c9
         )   
+        update_json()
         return embed        
     elif int(to_del) in user_dict_completed[message.author.id]:
         user_dict_completed[message.author.id].pop(int(to_del.strip()))
@@ -230,8 +238,10 @@ def delete_task(message):
         title ="Successfully deleted!",
         color =0xeb34c9
         )   
+        update_json()
         return embed 
-#Places a task from the base dictionary into the completed dictionary
+
+# Places a task from the base dictionary into the completed dictionary
 def complete_task(message):
     id_idx = message.content.find(' task')
     if id_idx == -1:
@@ -289,6 +299,7 @@ def complete_task(message):
             title ="Congrats on completing your task!",
             color =0x4e03fc
             )    
+            update_json()
             return embed      
         else:
             user_dict_completed[message.author.id][message_id]  = user_dict[message.author.id][message_id]
@@ -298,6 +309,7 @@ def complete_task(message):
             title ="Task marked as completed",
             color =0x4e03fc
             )    
+            update_json()
             return embed        
     if message_id in user_dict_overdue[message.author.id]:
         if message.author.id not in user_dict_completed:
@@ -310,6 +322,7 @@ def complete_task(message):
             title ="Congrats on completing your task!",
             color =0x4e03fc
             )    
+            update_json()
             return embed      
         else:
             user_dict_completed[message.author.id][message_id]  = user_dict_overdue[message.author.id][message_id]
@@ -319,6 +332,7 @@ def complete_task(message):
             title ="Task marked as completed",
             color =0x4e03fc
             )    
+            update_json()
             return embed        
     return discord.Embed(title ="No task with this ID exists for your account",color =0x4e03fc)    
 
@@ -326,6 +340,8 @@ def complete_task(message):
 
 #TODO Prints out the tasks in completed and todo
 def userview_task(message):
+    global user_dict
+    print("View user_dict: " , user_dict , " type: " , type(user_dict))
     if message.author.id not in user_dict:
         ids = []
     else:
@@ -345,11 +361,11 @@ def userview_task(message):
             overdue_ids = (list(user_dict_overdue[message.author.id]))
         
   
-    print("IDS: " , ids)
-    print("Completed IDS: " , completed_ids)
-    print("Overdue IDs " , overdue_ids)
+    #print("IDS: " , ids)
+    #print("Completed IDS: " , completed_ids)
+    #print("Overdue IDs " , overdue_ids)
 
-    #Get rid of incomplete tasks 
+    # Get rid of incomplete tasks 
     if -1 in ids:
         ids.remove(-1)
 
@@ -458,8 +474,8 @@ def view_task(message):
     )
     return embed
 
-#Add a task using the remind me to keywords
-#Put tasks into the -1 key if they do not include a time 
+# Add a task using the remind me to keywords
+# Put tasks into the -1 key if they do not include a time 
 def add_task(message):
     if ' at' in message.content:
         split_index = message.content.find(' at')
@@ -481,7 +497,8 @@ def add_task(message):
         toDos[0] = taskID
         toDos[-1] = message.content[12:split_index]
         toDos[taskID] = task
-        #Mikes Addition $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
+
         if message.author.id not in user_dict:
             user_dict[message.author.id] = {}
             user_dict[message.author.id][taskID]  = task
@@ -489,7 +506,8 @@ def add_task(message):
         else:
             user_dict[message.author.id][taskID] = task
             print("Added to user dict: " , user_dict)
-        # Rami's Addition Schedule the job
+
+        update_json()
         schedule_job(message, tim_e, taskID)
         embed = discord.Embed(
         title =replies[random.randrange(len(replies))] + ". The task ID is " + str(taskID),
@@ -501,7 +519,7 @@ def add_task(message):
         split_index = message.content.find(' to')
         task = message.content[split_index + 3:].strip()
 
-        #If the time is not added store task in a tuple at key -1 
+        # If the time is not added store task in a tuple at key -1 
         if message.author.id not in user_dict:
             user_dict[message.author.id] = {}
             user_dict[message.author.id][-1]  = task
@@ -510,6 +528,7 @@ def add_task(message):
             user_dict[message.author.id][-1] = task
             print("Added to user dict timeless: " , user_dict)
         
+        update_json()
         toDos[-1] = task
         print("User Dict without time" , user_dict)
         embed = discord.Embed(
@@ -520,7 +539,7 @@ def add_task(message):
 
 #TODO When a time is sent check to see if is associated with a previous task
 def add_task_time(message):
-    #increment task ID for the after part of at case
+    # Increment task ID for the after part of at case
     taskID = toDos[0] + 1
     toDos[0] = taskID
     print(taskID, " task ID")
@@ -543,20 +562,114 @@ def add_task_time(message):
     return embed
     # return replies[random.randrange(len(replies))] + ". The task ID(time) is " + str(taskID)  
 
+# Puts the contents of the dictionary into the json file
+def update_json():
+
+    # Reading in these files serves no purpose im just keeping it here in case we need an example of how to access them
+  
+
+    filename = 'user_data.json'
+    #print("Update JSON dict: " , user_dict)
+    if len(user_dict)>0:
+        user_json_data= user_dict
+        with open(filename, "w") as file:
+            json.dump(user_json_data, file)
+
+    if len(user_dict_completed) > 0:
+            completed_json_data= user_dict_completed
+            with open("completed_data.json", "w") as file:
+                json.dump(completed_json_data, file)
+
+    if len(user_dict_overdue) > 0:
+            overdue_json_data= user_dict_overdue
+            with open("overdue_data.json", "w") as file:
+                json.dump(overdue_json_data, file)
+    #print("Json Files updated")
+
+#Enters the json and grabs the dictionary there
+def load_dict(filename):
+    with open(filename) as dict:
+            dictionary = json.load(dict)
+            #print("Dict: " ,dictionary)
+    return dictionary
+
+
+#TODO json must store keys as strings when they should be ints
+#Option 1 refactor all code expecting ints to become strings
+#Option 2 read in the json and manaually make them into ints
+def refresh_json():
+    #Insert any changes made on the webapp
+    global user_dict
+    global user_dict_completed
+    global user_dict_overdue
+    #global user_dict_overdue
+
+    #print("Before refresh: " , user_dict)
+    #This is the user dictionary with strings
+    user_dict_strings = dict(load_dict('user_data.json'))
+    #print("user_dict_strings " , user_dict_strings )
+    completed_dict_strings = dict(load_dict('completed_data.json'))
+    overdue_dict_strings = dict(load_dict('overdue_data.json'))
+
+
+    user_dict.clear()
+    user_dict_completed.clear()
+    user_dict_overdue.clear()
+
+    #For the user_dict
+    for str_key in user_dict_strings:
+        for str_task_key in user_dict_strings[str_key]:
+            if int(str_key) not in user_dict:
+                user_dict[int(str_key)] ={}
+            user_dict[int(str_key)][int(str_task_key)] = user_dict_strings[str_key][str_task_key]
+
+    #for the completed dict
+    for str_key in completed_dict_strings:
+        for str_task_key in completed_dict_strings[str_key]:
+            if int(str_key) not in user_dict_completed:
+                user_dict_completed[int(str_key)] ={}
+            user_dict_completed[int(str_key)][int(str_task_key)] = completed_dict_strings[str_key][str_task_key]
+    
+    #for the overdue_dict
+    for str_key in overdue_dict_strings:
+        for str_task_key in overdue_dict_strings[str_key]:
+            if int(str_key) not in user_dict_overdue:
+                user_dict_overdue[int(str_key)] ={}
+            user_dict_overdue[int(str_key)][int(str_task_key)] = overdue_dict_strings[str_key][str_task_key]
+
+
+    #print("After Refresh" , user_dict , "\n" , user_dict_completed , "\n" , user_dict_overdue)
+
+    #print("JSON refreshed")
+    return
+
 
 @bot.event
 async def on_message(message):
     if message.author == bot.user:
         return
+
+    with open('task_id.json' , "r") as json_task:
+            json_task_id = json.load(json_task)
+            #print("Json Task: " , json_task_id)
+            #print("Json task id  " ,json_task_id["task_id"])
+            if json_task_id['task_id'] < toDos[0]:
+                with open('task_id.json' , "w") as json_task_write:
+                    json_task_id['task_id'] = toDos[0]
+                    json.dump(json_task_id, json_task_write)
+            else:
+                toDos[0] = int(json_task_id['task_id'])
     
+    refresh_json()
     usr_important_message = message.content.split() # parsing user's message for makring tasks as important
 
-    #Add task
+    # Add task
     regexCheck = re.match(".*(?![remind me to]).+", message.content)
     remindMeCheck = re.match("(.*(?=[R-r]emind me to).*)", message.content)
     channelRegexCheck = re.match('[S-s]tart \w*$', message.content)
     if bool(regexCheck) and remindMeCheck:
         bot_message = add_task(message)
+        update_json()
         await message.channel.send(embed = bot_message)
         return
     elif message.content.startswith('Start') or message.content.startswith('start') :
@@ -577,7 +690,7 @@ async def on_message(message):
         return
         
 
-    #Add task if the time was not previously sent
+    # Add task if the time was not previously sent
     elif bool(re.match("^[0-9].*[AM|am|PM|pm]+", message.content)):
         bot_message= add_task_time(message)
         if bot_message == 1:
@@ -589,19 +702,35 @@ async def on_message(message):
             await message.channel.send(embed = embed)
             return
         else:
+            update_json()
             await message.channel.send( embed = bot_message)
     
-    #Delete task
+    # Login to web app
+    elif message.content.lower().startswith('login'):
+      login_title = "Hey, " + message.author.name
+      embedVar = discord.Embed(
+        title = login_title,
+        color =0x7214E3
+      )
+      link = "[Click here!](https://www-student.cse.buffalo.edu/CSE442-542/2022-Spring/cse-442s/webUI?username=" + str(message.author.name) + "&userid=" + str(message.author.id) + ")"
+      # print(link)
+      embedVar.add_field(name="Use the link below to use our online scheduler! ", value=link)
+      await message.channel.send(embed=embedVar)
+      return
+
+    # Delete task
     elif message.content.startswith('delete '):
         bot_message = delete_task(message)
+        update_json()
         await message.channel.send(embed = bot_message)
         return
     #Completed task
     elif message.content.startswith('completed '):
         bot_message = complete_task(message)
+        update_json()
         await message.channel.send(embed= bot_message)
         return
-    #view task:
+    # View task:
     elif message.content.startswith('userview'):
         bot_message = userview_task(message)
         await message.channel.send(embed= bot_message)
@@ -609,7 +738,7 @@ async def on_message(message):
     elif message.content.startswith('view'):
         bot_message = userview_task(message)
         await message.channel.send(embed=bot_message)
-    #clear all 
+    # Clear all 
     elif message.content.startswith('clear all tasks') or message.content.startswith('clear'):
         ids = list(toDos)
         completed_ids = list(completed)
@@ -626,11 +755,11 @@ async def on_message(message):
             del user_dict_completed[i]
         for i in completed_ids:
             completed.pop(i)
-        
-        await message.channel.send("OK all your tasks have been cleared 🙂")
-        important_tasks.clear()             # NEW
 
-#***********************************************************************************************************************
+        update_json()
+        await message.channel.send("OK all your tasks have been cleared 🙂")
+        important_tasks.clear() 
+
     elif message.content.startswith('change mood'):
         if   '🙂' in message.content:            
             await message.channel.send("mood changed to normal")
@@ -673,8 +802,8 @@ async def on_message(message):
         description = quote,
             color =0xBBA14F )
         await message.channel.send(embed=embed)   
-# Rami's code:-----------------------------------------------------------------------------------------------
-    # task: edit
+
+    # Edit task
     elif message.content.startswith('edit'):
         debug = False  # if debugging, make True
         if debug: print('Before:')  # debug
@@ -727,6 +856,7 @@ async def on_message(message):
                         edited_entry = (new_task, time)
                         toDos[task_ID] = edited_entry  # new entry is entered as a tuple
                         user_dict[message.author.id][task_ID] = edited_entry
+        
         # reminder addition: -------------------------------------------------------------------------------------------    
                         user_time = process_input_time(time)
 
@@ -740,8 +870,7 @@ async def on_message(message):
                         scheduler.add_job(func, CronTrigger(hour=time_hrs, minute=time_mins, second="0"),
                                           (message, new_task, military_time,), id=str(task_ID))  # old
         # --------------------------------------------------------------------------------------------------------------
-
-                      
+            
                     else:
                         await message.channel.send('Your edit message is not formatted correctly.' +
                                                    '\nYou are probably missing an "at" before your task time.' +
@@ -758,11 +887,12 @@ async def on_message(message):
                 return
         if debug: print('After:')  # debug = just to show the task has been edited
         if debug: print(toDos)  # debug - just to show the task has been edited
+        update_json()
         await message.channel.send('your task has been edited   🙂')
+    
     # -----------------------------------------------------------------------------------------------------------
 
-    # Rami's code:******************************************************************************************************
-    # task: help
+    # Help
     elif message.content.lower().startswith('help'):
         embed = discord.Embed(
             title="Help",
@@ -770,10 +900,8 @@ async def on_message(message):
             color=0xFF5733)
         await message.add_reaction("👍🏾")
         await message.channel.send(embed=embed)
-    # ***
 
-    # Rami's code:******************************************************************************************************
-    # task: example
+    # Example
     elif message.content.lower().startswith('examples') or message.content.lower().startswith('example'):
         embed = discord.Embed(
         title="Examples of Commands I support",
@@ -781,10 +909,10 @@ async def on_message(message):
         color=0x6A5ACD)
         await message.add_reaction("👍🏾")
         await message.channel.send(embed=embed)
+    
     # ******************************************************************************************************************
 
-    # Rami's code:******************************************************************************************************
-    # task: tips        # user story: make the bot more user-friendly
+    # Tips        # user story: make the bot more user-friendly
     elif message.content.lower().startswith('tips'):
         embed = discord.Embed(
         title="Tips",
@@ -792,10 +920,10 @@ async def on_message(message):
         color=0x6A5ACD)
         await message.add_reaction("👍🏾")
         await message.channel.send(embed=embed)
+    
     # ******************************************************************************************************************
 
-    # ******************************************************************************************************************
-    # task: Replying to greetings        # user story: make the bot more user-friendly
+    # Replying to greetings        # user story: make the bot more user-friendly
     elif (message.content.lower().startswith('hey') or
           message.content.lower().startswith('hi') or
           message.content.lower().startswith('hello')):
@@ -804,16 +932,15 @@ async def on_message(message):
         await message.channel.send(bot_greeting_msg())
     # ******************************************************************************************************************
 
-    # ******************************************************************************************************************
-    # Task: Important
+    # Mark Important
     elif (message.content.lower().startswith('mark task') and
           usr_important_message[3].lower() == 'as' and
           usr_important_message[4].lower() == 'important'):
 
         await message.channel.send(important_task_message(message.content, 2, user_dict[message.author.id], important_tasks))
-    # ******************************************************************************************************************
 
     # ******************************************************************************************************************
+
     # Task: Marking an important task as not important. If the task is not marked as important, then it will not be
     # affected. Assume the correct user message format is: "mark task task_ID as not important"
     elif (message.content.lower().startswith('mark task') and
@@ -822,16 +949,17 @@ async def on_message(message):
           usr_important_message[5].lower() == 'important'):
 
           await message.channel.send(not_important_task_message(message.content, 2, important_tasks))
+    
     # ******************************************************************************************************************
-
-    # ******************************************************************************************************************
-    # Task: Viewing all Important tasks.
+    
+    # Viewing all Important tasks.
     elif (message.content.lower().startswith('list important tasks')):
         embed = discord.Embed(
             title="Important Tasks",
             description=view_important_tasks(important_tasks),
             color=0xFF0000) # red
         await message.channel.send(embed=embed)
+    
     # ******************************************************************************************************************
     else:       # new
         await bot.process_commands(message)
