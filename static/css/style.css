@@ -4,9 +4,9 @@
 }
 
 body {
-	color: white;
+	/* color: white; */
 	font-family: 'Poppins', sans-serif;
-	background-image: url('./assets/img/wallpaper_dark.png');
+	background-image: url('wallpaper_dark.png');
 	font-size: 16px;
 	max-width: 1920px;
 	margin: 0 auto;
@@ -60,6 +60,7 @@ p {
 	font-weight:500;
 	padding-bottom:21px;
 }
+
 .title h2 a:before{
 	position:absolute;
 	content:'';
@@ -69,6 +70,12 @@ p {
 	width:40px;
 	background:#ffb901;
 }
+
+.title h3{
+	position:relative;
+	color: white;
+}
+
 .title p{
 	color:#a7a7a7;
 	font-size:16px;
@@ -149,7 +156,7 @@ p {
 
 body{
     margin-top:20px;
-    background: #f8f8f8;
+    /* background: #f8f8f8; */
 }
 
 .todo-nav {
