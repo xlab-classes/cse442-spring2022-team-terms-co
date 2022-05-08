@@ -6,21 +6,54 @@
 }
 
 body {
-	color: black;
-  background-image: url("wallpaper_dark.png");
-	font-family: 'Poppins', sans-serif;
-	font-size: 16px;
-	max-width: 1920px;
-	margin: 0 auto;
-	overflow-x: hidden;
+    color: white;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    background-image: url('wallpaper_dark.png');
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
+  
+  }
 
-	background-size:contain;
-	font-family: 'Source Sans Pro', sans-serif;
-}
+h3{text-align: center;}
+h2{text-align: center;}
 
-a{
-  color: pink;
-}
+.outer {
+    display: table;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    
+  }
+  
+.middle {
+    display: table-cell;
+    vertical-align: middle;
+  }
+  
+.inner {
+    margin-left: auto;
+    margin-right: auto;
+    width: 40%;
+  }
+  
+#footer {
+      background-color: #333;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      text-align: center;
+  }
+  
+#rcorners1 {
+    border-radius: 25px;
+    background: rgba(245, 40, 145, 0.8);
+    padding: 20px;
+    text-align: left;
+  }
+
 
 #app{
    padding: 1rem;
