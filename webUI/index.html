@@ -1,146 +1,158 @@
 <!DOCTYPE html>
 <html lang="en">
 <meta charset="UTF-8">
-<title>Page Title</title>
+<title>TaskBot task viewer</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<link rel="stylesheet" href="/style.css">
-<style>
-</style>
+<link rel="stylesheet" href="style.css">
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<script src="/script.js"></script>
-<body background="wallpaper_dark.png" onload="redirect()">
-  <div>
-    
-  <ul class="navbar">
-    
-  
-  <li><a href="#name" id="uname">Name</a></li>
-  <li><a href="#addTask">Add Task</a></li>
-    <h2 style="padding: 10px;text-align: center;position: initial;margin: 0px;">TaskBot</h2>
-  </ul>
-  </div>
-  <div id="addTask" class="overlay">
-	<div class="popup">
-		<h2>Add a task</h2>
-		<a class="close" href="#">&times;</a>
-    <form action="javascript:void(0);">
-     <input type="text" class="form-control add-task" placeholder="New Task...">
-      <input type="text" class="form-control add-task1" placeholder="at time(HH:MM am/pm)">
-      <button class="submit-btn">Add</button>
-    </form>
-</div>
-</div>
+<script src="script.js"></script>
+<body onload="redirect()">
+    <div>
+        <ul class="navbar">
+            <li><a href="#name" id="uname">Name</a></li>
+            <h2 style="padding: 10px;text-align: center;position: initial;margin: 0px;">TaskBot</h2>
+        </ul>
+    </div>
+    <br><br><br><br>
+    <h3>Bookmark this page to keep up with your TaskBot tasks!</h3>      
 
-<div id="user_data"></div>
-<div id="completed_data"></div>
-<div id="overdue_data"></div>
+    <div class="outer">
+        <div class="middle">
+          <div class="inner" id="rcorners1">
+            <h2>Upcoming Tasks:</h2><br>
+            <div id="user_data"></div>
+            <h2>Completed Tasks:</h2><br>
+            <div id="completed_data"></div>
+            <h2>Overdue Tasks:</h2><br>
+            <div id="overdue_data"></div>
+          </div>
+        </div>
+      </div>
+      
+        <div id="footer">
+            Created by Edited by TERMS&CO. CSE442 Spring 2022
+        </div>
 
-<script>
-  //Code to display the json
+    <script>
+        //Code to display the json
 
-console.log("ENTERED THE SCRIPT")
+        console.log("ENTERED THE SCRIPT")
         //https://howtocreateapps.com/fetch-and-display-json-html-javascript/
         fetch('../user_data.json')
-            .then(function (response) {
-                return response.json();
-            })
-            .then(function (data) {
-                appendData(data);
-            })
-            .catch(function (err) {
-                console.log('error: ' + err);
-            });
-        function appendData(data) {
+                .then(function (response) {
+                    return response.json();
+                })
+                .then(function (data) {
+                    user_data_appendData(data);                     // NEW: I changed this to redirect to the correct function
+                })
+                .catch(function (err) {
+                    console.log('error: ' + err);
+                });
+        function user_data_appendData(data) {
             var mainContainer = document.getElementById("user_data");
             console.log("User data: " + Object.entries(data))
-            
+
+            var user_data_dictionary;                               // NEW: a dictionary to store active tasks
+
             for (let [key, value] of Object.entries(data)) {
                 console.log(key);
-                console.log(Object.entries(value))
+                user_data_dictionary = Object.entries(value);      // NEW - assign the dictionary
+
                 var div = document.createElement("div");
-                
-                div.innerHTML = 'Key: ' + key + " Values: " + Object.entries(value)
-                
+
+                // New: Iterate throught the active tasks dictionary to display the ID alongside the task detail and time
+                for (const [id, task] of user_data_dictionary){
+                    var task_details = task[0];
+                    var task_time = task[1];
+                    var previous_text = div.innerHTML;
+                    div.innerHTML = previous_text + "<br />" + "•ID:" + id + '| ' + task_details + " at " + task_time;
+                }
+                // END
+
                 mainContainer.appendChild(div);
-                
+
             }
         }
 
         fetch('../completed_data.json')
-            .then(function (response) {
-                return response.json();
-            })
-            .then(function (data) {
-                appendData(data);
-            })
-            .catch(function (err) {
-                console.log('error: ' + err);
-            });
-        function appendData(data) {
+                .then(function (response) {
+                    return response.json();
+                })
+                .then(function (data) {
+                    completed_data_appendData(data);                    // NEW: I changed this to redirect to the correct function
+                })
+                .catch(function (err) {
+                    console.log('error: ' + err);
+                });
+        function completed_data_appendData(data) {
             var mainContainer = document.getElementById("completed_data");
 
             console.log("Completed data: " + Object.entries(data))
-            
+
+            var completed_data_dictionary;                              // NEW: a dictionary to store completed tasks
+
             for (let [key, value] of Object.entries(data)) {
                 console.log(key);
                 console.log(Object.entries(value))
+                completed_data_dictionary = Object.entries(value);      // NEW - assign the dictionary
+
                 var div = document.createElement("div");
-                div.innerHTML = 'Key: ' + key + " Values: " + Object.entries(value)
+
+                // New: Iterate through the completed tasks dictionary to display the ID alongside the task detail and time
+                for (const [id, task] of completed_data_dictionary){
+                    console.log("id = " + id + " task = " + task);
+                    var task_details = task[0];
+                    var task_time = task[1];
+                    var previous_text = div.innerHTML;
+                    div.innerHTML = previous_text + "<br />" + "•ID:" + id + '| ' + task_details + " at " + task_time;
+                }
+                // END_
+
                 mainContainer.appendChild(div);
-                
+
             }
         }
 
-
         fetch('../overdue_data.json')
-            .then(function (response) {
-                return response.json();
-            })
-            .then(function (data) {
-                appendData(data);
-            })
-            .catch(function (err) {
-                console.log('error: ' + err);
-            });
-        function appendData(data) {
+                .then(function (response) {
+                    return response.json();
+                })
+                .then(function (data) {
+                    overdue_data_appendData(data);                      // NEW: I changed this to redirect to the correct function
+                })
+                .catch(function (err) {
+                    console.log('error: ' + err);
+                });
+        function overdue_data_appendData(data) {
             var mainContainer = document.getElementById("overdue_data");
 
             console.log("Overdue data: " + Object.entries(data))
-            
+
+            var overdue_data_dictionary;            // NEW: a dictionary to store overdue tasks
+
             for (let [key, value] of Object.entries(data)) {
                 console.log(key);
                 console.log(Object.entries(value))
+
+                overdue_data_dictionary = Object.entries(value);      // NEW - assign the dictionary
+
                 var div = document.createElement("div");
-                div.innerHTML = 'Key: ' + key + " Values: " + Object.entries(value)
+
+                // New: Iterate through the overdue tasks dictionary to display the ID alongside the task detail and time
+                for (const [id, task] of overdue_data_dictionary){
+                    console.log("id = " + id + " task = " + task);
+                    var task_details = task[0];
+                    var task_time = task[1];
+                    var previous_text = div.innerHTML;
+                    div.innerHTML = previous_text + "<br />" + "•ID:" + id + '| ' + task_details + " at " + task_time;
+                }
+                // END
                 mainContainer.appendChild(div);
-                
+
             }
         }
 
-
-
-</script>
-
-<div class="container">
-    <div class="row">
-        <div class="col-md-12">
-            <div class="card card-white">
-              <ul class="nav nav-pills todo-nav" style="float: right;position: fixed;">
-                        <li role="presentation" class="nav-item all-task active"><a href="#" class="nav-link">All</a></li>
-                        <li role="presentation" class="nav-item active-task"><a href="#" class="nav-link">Active</a></li>
-                        <li role="presentation" class="nav-item completed-task" id="completed_tasks"><a href="#" class="nav-link">Completed</a></li>
-                    </ul>
-              <h2 id="section"> Active: </h2>
-                <div class="card-body">
-                    
-
-                    <div class="todo-list">
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
+    </script>
 </body>
 </html>
