@@ -83,6 +83,8 @@ Finally, we can delete the task we just completed and make sure that our schedul
 ![image](https://user-images.githubusercontent.com/43181965/161452854-388715d1-b883-4990-8c9a-89582cb6b264.png)
 <br/>
 
+# **Using TaskBot**
+To add TaskBot to your Discord server, simply visit our landing page: https://www-student.cse.buffalo.edu/CSE442-542/2022-Spring/cse-442s/static/. Once you open the landing page, click on the "Add Bot now!" tab which will direct you to a page where you can add TaskBot to a server of your choice provided you are logged in to your Discord account on the web. After adding TaskBot, you can use the commands illustrated above to test it out. Once TakBot hass been added to a server, simply type "login" in the chat box, and TaskBot will send you a link of the website where your schedule of tasks is displayed.
 
  *  *  *  *  *  *   *  *  *  *  *  *   *  *  *  *  *  *   *  *  *  *  *  *  
 # **Links**
